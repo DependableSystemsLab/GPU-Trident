@@ -13,9 +13,9 @@ p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 diffLines = p.stdout.read()
 
 with open("loop_terminating_cmp_list.txt", 'w') as rf:
-	for line in diffLines:
-		rf.write(line)
-		
+    for line in diffLines:
+        rf.write(line)
+        
 os.system("rm null")
 
 

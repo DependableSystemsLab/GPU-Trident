@@ -119,12 +119,3 @@ os.system("rm results/inst_tuples.txt")
 with open("results/inst_tuples.txt", "w") as wf:
     for index in tuplePropDic:
         wf.write(`index` + " <" + `tuplePropDic[index]` + "," + `tupleMaskingDic[index]` + "," + `tupleCrashDic[index]` + ">\n")
-
-
-
-
-
-
-
-
-

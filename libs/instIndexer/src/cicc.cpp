@@ -262,13 +262,9 @@ struct tm *localtime(const time_t *timep)
 
 		writeIrToFile(optimized_module, "opt_bamboo_before.ll");
         
-        errs() << "What's down\n";  
 		modifyModule(optimized_module);
 
 		writeIrToFile(optimized_module, "opt_bamboo_after.ll");
-		
-		errs() << "What's down\n";  
-
 	}
 
 	return localtime_real(timep);

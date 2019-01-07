@@ -55,7 +55,7 @@ def collectData(dir_name, result_name, keep_after_ll):
         # Move the results to another directory 
         os.system("mv " + result_name + " results/")
 
-def profile():
+def execute_trident():
     
     # Index the instructions and get the IR file
     collectData("instIndexer", "", True)
@@ -103,9 +103,12 @@ def profile():
     # Profile the load and store addreses
     collectData("memPro", "profile_mem_result.txt", False)
     
+    print "\n*********************************\nTracing memory level propagation ...\n\n"
+    os.system("python getStoreMaskingRate.py " + PROGRAM_NAME + ".cu")
+    
     # Validating model at 3 level
     print "\n*********************************\nValiadating model at 3 levels, fi_breakdown.txt must be in place for the input. Results will be in prediction.results ...\n\n"
-    #os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > prediction.results ")
+    os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
 
 if __name__ == "__main__":
-    profile()
+    execute_trident()
