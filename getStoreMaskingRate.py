@@ -5,7 +5,7 @@ import subprocess
 
 
 ##########################
-irPath = sys.argv[1]
+src_name = sys.argv[1]
 ##########################
 
 storeMaskingDic = {} # All stores executed, results here too.
@@ -271,16 +271,15 @@ def getMaskingRateFromInst(initStoreIndex):
             else:
                 # DEBUG
                 #print "~~ load to terminator cache miss"
-                flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING"
+                flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
                 ktraceFlag = " -D KERNELTRACE"
                 makeCommand1 = "S_INDEX=" + str(loadIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
 
                 file_list = os.listdir("libs/ScsEndSeq/lib")
 
                 os.system("cp libs/ScsEndSeq/lib/* .")
-                
-                p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                diffInsts = p.stdout.read()
+                diffInsts = subprocess.check_output(makeCommand1, shell=True)
+
                 loadToTerminatorCacheDic[int(loadIndex)] = diffInsts
 
                 # Clean the copied files

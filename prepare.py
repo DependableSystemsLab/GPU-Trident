@@ -11,7 +11,7 @@ OUT_NAME = PROGRAM_NAME + ".out "
 
 
 #############################################################################
-flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING"
+flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
 ktraceFlag = " -D KERNELTRACE"
 linkFlags = ""
 optFlags = ""
@@ -60,6 +60,13 @@ def execute_trident():
     # Index the instructions and get the IR file
     collectData("instIndexer", "", True)
     
+    # Convert opt_bamboo_after.ll into readable format
+    os.system(LLVM_PATH + "/bin/llvm-dis indexed.ll -o readable_indexed.ll")
+    os.remove("indexed.ll")
+    
+    # Record load and store instruction and crash rate "Temp here"
+    os.system("python find_load_store.py > results/crash_rate.txt")
+    
     # Profile the nummber of times each instruction is called
     collectData("instCount", "instCountResult.txt", False)
     
@@ -86,10 +93,6 @@ def execute_trident():
     
     # Profile the average value of arguments of compare instructions
     collectData("shftVal", "profile_shift_value_result.txt", False)
-    
-    # Convert opt_bamboo_after.ll into readable format
-    os.system(LLVM_PATH + "/bin/llvm-dis indexed.ll -o readable_indexed.ll")
-    os.remove("indexed.ll")
     
     # Run resolveCmpProob.py script
     os.system("python resolveCmpProb.py readable_indexed.ll")

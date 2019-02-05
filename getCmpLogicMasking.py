@@ -32,7 +32,7 @@ if targetCmpIndex not in ltCmpList:
     # DEBUG
     print "Non-loop-terminating CMP: "
     
-    flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING"
+    flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
     ktraceFlag = " -D KERNELTRACE"
     makeCommand1 = "CMP_PROB_FLIE=results/profile_cmp_prob_result.txt LTCMP_FILE=results/loop_terminating_cmp_list.txt " + "S_INDEX=" + str(targetCmpIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
     
@@ -58,7 +58,7 @@ else:
     # DEBUG
     print "Loop-terminating CMP: "  
 
-    flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING"
+    flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
     ktraceFlag = " -D KERNELTRACE"
     makeCommand1 = "CMP_PROB_FLIE=results/profile_cmp_prob_result.txt LTCMP_FILE=results/loop_terminating_cmp_list.txt " + "S_INDEX=" + str(targetCmpIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
     

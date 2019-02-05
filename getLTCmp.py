@@ -17,5 +17,3 @@ with open("loop_terminating_cmp_list.txt", 'w') as rf:
         rf.write(line)
         
 os.system("rm null")
-
-

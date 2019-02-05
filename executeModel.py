@@ -53,7 +53,7 @@ with open("results/store_masking.txt", 'r') as sf:
 # Run Static-instruction-level Masking (SIM)
 ############################################################################
 
-flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING"
+flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
 ktraceFlag = " -D KERNELTRACE"
 makeCommand1 = "STUPLE_FILE=results/simplified_inst_tuples.txt " + "S_INDEX=" + str(targetIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
 
@@ -77,12 +77,6 @@ for file in file_list:
 os.remove("temp.o")
 os.remove("opt_bamboo_after.ll")
 os.remove("opt_bamboo_before.ll")
-
-#selectIndexStr = "-select_index=" + `targetIndex`
-#command = [OPT, "-S", "-load", LLVMPASS_FOLDER + "/SIM.so", "-bishe_insert", selectIndexStr, irPath, "-o", "null", "-select_stuples_file=simplified_inst_tuples.txt"]
-#p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-#simOutput = p.stdout.read()
-
 
 totalTmnInstCount = 0
 accumSdc = 0
