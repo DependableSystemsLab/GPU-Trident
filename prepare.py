@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, sys
 
 PROGRAM_NAME = "example"
 PROGRAM_OUTPUT_NAME = "result.txt" 
@@ -42,7 +42,6 @@ def collectData(dir_name, result_name, keep_after_ll):
     # Clean the produced files
     os.remove(PROGRAM_NAME + ".out")
     os.remove(PROGRAM_NAME + ".o")
-    os.remove(PROGRAM_OUTPUT_NAME)
     os.remove(dir_name + ".o")
     os.remove("opt_bamboo_before.ll")
     
@@ -54,8 +53,11 @@ def collectData(dir_name, result_name, keep_after_ll):
     if result_name != "":
         # Move the results to another directory 
         os.system("mv " + result_name + " results/")
+    
+    if PROGRAM_OUTPUT_NAME != "":
+        os.remove(PROGRAM_OUTPUT_NAME)
 
-def execute_trident():
+def execute_profile():
     
     # Index the instructions and get the IR file
     collectData("instIndexer", "", True)
@@ -84,6 +86,8 @@ def execute_trident():
                 count = line.split(": ")[1].replace("\n", "")
                 wf.write("-- FI Index: " + index + ", : , : , : , Total FI: " + count + "\n")
     
+    # Profile the number of time compare instructions resolve to 1 or 0
+    collectData("callCount", "profile_call_prob_result.txt",False)
     
     # Profile the number of time compare instructions resolve to 1 or 0
     collectData("cmpProb", "profile_cmp_prob_result.txt",False)
@@ -94,7 +98,7 @@ def execute_trident():
     # Profile the average value of arguments of compare instructions
     collectData("shftVal", "profile_shift_value_result.txt", False)
     
-    # Run resolveCmpProob.py script
+    # Run resolveCmpProb.py script
     os.system("python resolveCmpProb.py readable_indexed.ll")
     
     # Find the tuples for instructions
@@ -106,6 +110,9 @@ def execute_trident():
     # Profile the load and store addreses
     collectData("memPro", "profile_mem_result.txt", False)
     
+
+def execute_trident():
+    
     print "\n*********************************\nTracing memory level propagation ...\n\n"
     os.system("python getStoreMaskingRate.py " + PROGRAM_NAME + ".cu")
     
@@ -114,4 +121,15 @@ def execute_trident():
     os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
 
 if __name__ == "__main__":
-    execute_trident()
+
+    phase = sys.argv[1]
+
+    if phase.lower() == 'profile': 
+        execute_profile()
+
+    elif phase.lower() == 'execute':
+        execute_trident()
+
+    else:
+        print "Expected arguments\n\n profile -\t Profile the application\n execute -\t Execute the trident on the application\n"
+

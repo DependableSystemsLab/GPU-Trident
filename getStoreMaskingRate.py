@@ -3,6 +3,7 @@
 import os, sys
 import subprocess
 
+OutputStores_inst = []
 
 ##########################
 src_name = sys.argv[1]
@@ -485,7 +486,7 @@ with open("results/store_masking.txt", 'w') as sf:
     for storeIndex in storesList:
         cmpMasking = getMaskingRateFromInst(storeIndex)
         warMasking = 0
-        if storeIndex in storeWarMaskingDic:
+        if storeIndex in storeWarMaskingDic and storeIndex not in OutputStores_inst:
             warMasking = storeWarMaskingDic[storeIndex]
         totalMasking = (1-warMasking) * cmpMasking + warMasking
         print "STORE cmp masking: " + `storeIndex` + ": " + `cmpMasking` 

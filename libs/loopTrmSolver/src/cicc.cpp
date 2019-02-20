@@ -203,7 +203,7 @@ void processCmp(Instruction* targetHeaderBrInst, Function* f) {
 
     // The loop only contains 1 bb
     if(headerCmpIndex == targetCmpIndex) {
-        errs() << "SDC 1\n";
+        outs() << "SDC 1\n";
         return;
     }
 

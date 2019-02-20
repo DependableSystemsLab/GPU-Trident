@@ -116,13 +116,14 @@ void checkNextUseInst(Value* nextInst) {
         }
 
         if(isa<CmpInst>(currentInst)) {
-            errs() << "cmp " << getBambooIndex(currentInst) << "\n";
+            //printf();
+            outs() << "cmp " << getBambooIndex(currentInst) << "\n";
         } else if(isa<CallInst>(currentInst)) {
             //errs() << " - FUNC\n";
 
-            errs() << "call " << getBambooIndex(currentInst) << " " << dyn_cast<CallInst>(currentInst)->getCalledFunction()->getName() << "\n";
+            outs() << "call " << getBambooIndex(currentInst) << " " << dyn_cast<CallInst>(currentInst)->getCalledFunction()->getName() << "\n";
         } else if(isa<StoreInst>(currentInst)) {
-            errs() << "store " << getBambooIndex(currentInst) << "\n";
+            outs() << "store " << getBambooIndex(currentInst) << "\n";
             if( dyn_cast<StoreInst>(currentInst)->getPointerOperand() == nextInst ) {
                 // Next use is pointer in store
                 //errs() << ".ST(A)->";
@@ -137,7 +138,7 @@ void checkNextUseInst(Value* nextInst) {
             //errs() << "\n";
             //return;
         } else if(isa<BinaryOperator>(currentInst)) {
-            errs() << "bio " << getBambooIndex(currentInst) << "\n";
+            outs() << "bio " << getBambooIndex(currentInst) << "\n";
         }
         //errs() << "->";
 
@@ -149,7 +150,7 @@ void checkNextUseInst(Value* nextInst) {
 
 static void modifyModule(Module* module) {
 
-    errs() << getenv("S_INDEX") << "\n";
+    //errs() << getenv("S_INDEX") << "\n";
 
     // Index
     for (Module::iterator F = module->begin(), e = module->end(); F != e; F++) {

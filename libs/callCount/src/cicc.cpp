@@ -99,7 +99,7 @@ static void addProfileFunctionCall(Instruction* BI, Module* module){
 	checker_arg_types[0] = Type::getInt64Ty(module->getContext());
 	ArrayRef<Type*> argsTypes(checker_arg_types);
 	FunctionType* checker_type = FunctionType::get(Type::getVoidTy(BI->getContext()), argsTypes, false);
-	Constant* checker_handler_c = module->getOrInsertFunction("profileCount", checker_type);
+	Constant* checker_handler_c = module->getOrInsertFunction("callCount", checker_type);
 	Function* checker_handler = dyn_cast<Function>(checker_handler_c);
 	CallInst::Create(checker_handler, args, "", BI);
 	//errs() << "opcode:" << BI->getOpcode() << " index:" << getBambooIndex(BI) << "\n";
@@ -209,7 +209,7 @@ static void modifyModule(Module* module){
 				int opcode = BI->getOpcode();
 
 				// Add profile function call
-				if( getBambooIndex(BI) != -1 && opcode > 8 && opcode != 27 && opcode != 29 && opcode != 48/* && opcode != 49*/)
+				if( getBambooIndex(BI) != -1 && opcode == 49)
 				{
 					addProfileFunctionCall(BI, module);
 				}
@@ -217,7 +217,7 @@ static void modifyModule(Module* module){
 		}
 	}	
 
-	errs() << "Instruction count pass installed ... \n"; 
+	errs() << "Call count pass installed ... \n"; 
 
 }
 

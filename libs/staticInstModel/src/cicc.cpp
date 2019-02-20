@@ -124,7 +124,7 @@ void checkNextUseInst(InstNode* curNode) {
     if( std::find(visitedInstVector.begin(), visitedInstVector.end(), curValue) != visitedInstVector.end() ) {
         return;
     }
-
+    
     // Process current node
     //////////////////////////////////////////////////////////////////////////////////
     // DEBUG
@@ -140,7 +140,9 @@ void checkNextUseInst(InstNode* curNode) {
     // If it is a terminator, add to global accum
     long curInstIndex = getBambooIndex(curInst);
     long curInstOpcode = curInst->getOpcode();
-    if( (curInstOpcode == 2 && dyn_cast<BranchInst>(curInst)->isConditional()) || curInstOpcode == 29 || curInstOpcode == 49 ) {
+    //printf("OC:%ld\n", curInstOpcode);
+    //printf("InstI:%ld\n", curInstIndex);
+    if( (curInstOpcode == 2 && dyn_cast<BranchInst>(curInst)->isConditional()) || curInstOpcode == 29 /*|| curInstOpcode == 49*/ ) {
         // Result
         if(isa<StoreInst>(curInst)) {
             printf("%ld store: %.6f, %.6f, %.6f\n", curInstIndex, curNode->accumPR, curNode->accumMR, curNode->accumCR);
@@ -150,9 +152,10 @@ void checkNextUseInst(InstNode* curNode) {
             long cmpIndex = getBambooIndex( dyn_cast<Instruction>(curInst->getOperand(0)) );
             printf("%ld cmp: %.6f, %.6f, %.6f\n", cmpIndex, curNode->accumPR, curNode->accumMR, curNode->accumCR);
         }
-        
+        //printf("What now\n");
         return;
     }
+    
     
     // Add to visited
     visitedInstVector.push_back(curValue);
@@ -168,7 +171,8 @@ void checkNextUseInst(InstNode* curNode) {
         Instruction* childInst = dyn_cast<Instruction>(*UI);
 
         if( std::find(visitedInstVector.begin(), visitedInstVector.end(), childInst) == visitedInstVector.end() ) {
-        
+            
+            //printf("Inside\n");
             nextIterateInst = *UI;
             InstNode* nextNode = new InstNode;
             nextNode->accumPR = 0;
@@ -221,8 +225,8 @@ void checkNextUseInst(InstNode* curNode) {
 
 static void modifyModule(Module* module) {
 
-    errs() << getenv("STUPLE_FILE") << "\n";
-    errs() << getenv("S_INDEX") << "\n";
+    //errs() << getenv("STUPLE_FILE") << "\n";
+    //errs() << getenv("S_INDEX") << "\n";
     
     readSTuples();
 
@@ -275,7 +279,9 @@ static void modifyModule(Module* module) {
 
                 long llfiIndex = getBambooIndex(BI);
                 int opcode = BI->getOpcode();
+                
                 if (llfiIndex == targetIndex) {
+                    //printf("Inside\n");
                     // The target one
                     InstNode* initNode = new InstNode;
                     initNode->nodeInst = BI;
@@ -336,9 +342,9 @@ void readSTuples() {
     
     map<long, InstTuple*>::iterator itr; 
     
-    for (itr = instTupleMap.begin(); itr != instTupleMap.end(); ++itr) { 
-        cout << '\t' << itr->first << '\n'; 
-    } 
+    //for (itr = instTupleMap.begin(); itr != instTupleMap.end(); ++itr) { 
+        //cout << '\t' << itr->first << '\n'; 
+    //} 
 }
 
 static bool called_compile = false;
