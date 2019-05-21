@@ -11,7 +11,11 @@
 #define LIST_SIZE 100000
 extern "C" __device__ long long instCountList[LIST_SIZE];
 
-void bambooLogKernelBegin() {
+void bambooLogRecordOff(){
+
+}
+
+void bambooLogKernelBegin(int i) {
 
 }
 

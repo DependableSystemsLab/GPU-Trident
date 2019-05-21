@@ -10,9 +10,20 @@
 
 #define LIST_SIZE 100000
 extern "C" __device__ long long instCountList[LIST_SIZE];
+extern "C" __device__ unsigned long long record_flag;
 
-void bambooLogKernelBegin() {
+void bambooLogRecordOff(){
 
+    long long local_record = 0;
+
+    cudaMemcpyToSymbol(record_flag, &local_record, sizeof(long long), 0, cudaMemcpyHostToDevice);
+}
+
+void bambooLogKernelBegin(long long i) {
+
+    i = 1;
+
+    cudaMemcpyToSymbol(record_flag, &i, sizeof(long long), 0, cudaMemcpyHostToDevice);
 }
 
 void bambooLogKernelEnd() {

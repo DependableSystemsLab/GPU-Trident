@@ -15,9 +15,20 @@ extern "C" __device__ double fcmpValue1List[LIST_SIZE];
 extern "C" __device__ double fcmpValue2List[LIST_SIZE];
 extern "C" __device__ unsigned long long icmpCountList[LIST_SIZE];
 extern "C" __device__ unsigned long long fcmpCountList[LIST_SIZE];
+extern "C" __device__ unsigned long long record_flag;
 
-void bambooLogKernelBegin() {
+void bambooLogRecordOff(){
 
+    long long local_record = 0;
+
+    cudaMemcpyToSymbol(record_flag, &local_record, sizeof(long long), 0, cudaMemcpyHostToDevice);
+}
+
+void bambooLogKernelBegin(long long i) {
+
+    i = 1;
+
+    cudaMemcpyToSymbol(record_flag, &i, sizeof(long long), 0, cudaMemcpyHostToDevice);
 }
 
 void bambooLogKernelEnd() 

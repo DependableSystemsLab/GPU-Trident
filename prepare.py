@@ -33,7 +33,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     os.system("nvcc -arch=sm_30 " + dir_name + ".o " + OBJ_NAME + " -o " + OUT_NAME + " -O0")
 
     goldenOutput = subprocess.check_output("./" + OUT_NAME + " " + inputParameters, shell=True)
-    print goldenOutput
+    #print goldenOutput
 
     # Clean the copied files
     for file in file_list:
@@ -57,7 +57,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     if PROGRAM_OUTPUT_NAME != "":
         os.remove(PROGRAM_OUTPUT_NAME)
 
-def execute_profile():
+def profile():
     
     # Index the instructions and get the IR file
     collectData("instIndexer", "", True)
@@ -122,14 +122,11 @@ def execute_trident():
 
 if __name__ == "__main__":
 
-    phase = sys.argv[1]
-
-    if phase.lower() == 'profile': 
-        execute_profile()
-
-    elif phase.lower() == 'execute':
+    if sys.argv[1] == '1':
+        profile()
+    
+    elif sys.argv[1] == '2': 
         execute_trident()
-
+    
     else:
-        print "Expected arguments\n\n profile -\t Profile the application\n execute -\t Execute the trident on the application\n"
-
+        print "\n\nWrong input argument\n"

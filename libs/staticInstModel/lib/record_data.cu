@@ -8,7 +8,11 @@
 #include <cuda.h>
 #include <device_launch_parameters.h>
 
-void bambooLogKernelBegin() {
+void bambooLogRecordOff(){
+
+}
+
+void bambooLogKernelBegin(int i) {
 
 }
 
