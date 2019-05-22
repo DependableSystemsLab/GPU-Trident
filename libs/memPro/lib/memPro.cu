@@ -16,7 +16,7 @@ extern "C" __device__ void profileLoadInst(long* adress, long index){
     //int idx = blockIdx.x * blockDim.x + threadIdx.x;  
     //int idy = blockIdx.y * blockDim.y + threadIdx.y;
     
-    //if (record_flag != 0)
+    if (record_flag != 0)
     {
         unsigned long long local_index = atomicAdd(&index_c,1);
         atomicAdd(&load_store_address[local_index], (long)adress);
@@ -30,7 +30,7 @@ extern "C" __device__ void profileStoreInst(long* adress, long index){
     //int idx = blockIdx.x * blockDim.x + threadIdx.x;  
     //int idy = blockIdx.y * blockDim.y + threadIdx.y;
     
-    //if (record_flag != 0)
+    if (record_flag != 0)
     {
         unsigned long long local_index = atomicAdd(&index_c,1);
         atomicAdd(&load_store_address[local_index], (long)adress);
