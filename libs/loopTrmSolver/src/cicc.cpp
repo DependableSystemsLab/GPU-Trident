@@ -221,7 +221,7 @@ void processCmp(Instruction* targetHeaderBrInst, Function* f) {
         long curBbBrIndex = getTmnIndexOfBb(curBb);
         if(std::find(headerBrIndexVec.begin(), headerBrIndexVec.end(), curBbBrIndex)!=headerBrIndexVec.end()) {
             if( headerBrIndex != curBbBrIndex) {
-                errs() << "Loop nested found ... \n";
+                outs() << "Loop nested found ... \n";
                 return;
             }
         }

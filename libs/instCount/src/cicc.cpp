@@ -209,7 +209,7 @@ static void modifyModule(Module* module){
 				int opcode = BI->getOpcode();
 
 				// Add profile function call
-				if( getBambooIndex(BI) != -1 && opcode > 8 && opcode != 27 && opcode != 29 && opcode != 48/* && opcode != 49*/)
+				if( getBambooIndex(BI) != -1 && opcode > 8 && opcode != 27 && opcode != 29 && opcode != 48 && opcode != 49)
 				{
 					addProfileFunctionCall(BI, module);
 				}

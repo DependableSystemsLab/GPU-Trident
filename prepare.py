@@ -1,9 +1,7 @@
-import os, subprocess, sys
+import os, subprocess, shutil, sys
 
-PROGRAM_NAME = "example"
-PROGRAM_OUTPUT_NAME = "result.txt" 
-inputParameters = ""
-LLVM_PATH = "/home/abdul/GPU-Trident/llvm-install"
+# Import user provided configuration 
+from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH
 
 SRC_NAME = " "+ PROGRAM_NAME + ".cu "
 OBJ_NAME = PROGRAM_NAME + ".o "
@@ -32,7 +30,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     os.system("nvcc -arch=sm_30 " +  dir_name + ".cu -c -dc -O0")
     os.system("nvcc -arch=sm_30 " + dir_name + ".o " + OBJ_NAME + " -o " + OUT_NAME + " -O0")
 
-    goldenOutput = subprocess.check_output("./" + OUT_NAME + " " + inputParameters, shell=True)
+    goldenOutput = subprocess.check_output("./" + OUT_NAME + " " + INPUT_PARAMETERS, shell=True)
     #print goldenOutput
 
     # Clean the copied files
@@ -59,18 +57,11 @@ def collectData(dir_name, result_name, keep_after_ll):
 
 def profile():
     
-    # Index the instructions and get the IR file
-    collectData("instIndexer", "", True)
-    
-    # Convert opt_bamboo_after.ll into readable format
-    os.system(LLVM_PATH + "/bin/llvm-dis indexed.ll -o readable_indexed.ll")
-    os.remove("indexed.ll")
+    # Profile the nummber of times each instruction is called
+    collectData("instCount", "instCountResult.txt", False)
     
     # Record load and store instruction and crash rate "Temp here"
     os.system("python find_load_store.py > results/crash_rate.txt")
-    
-    # Profile the nummber of times each instruction is called
-    collectData("instCount", "instCountResult.txt", False)
     
     # Produce fi_breakdown.txt, if it is already present delete it
     if (os.path.exists("results/fi_breakdown.txt")):
@@ -109,8 +100,24 @@ def profile():
     
     # Profile the load and store addreses
     collectData("memPro", "profile_mem_result.txt", False)
-    
 
+    os.rename("results/profile_mem_result.txt", "results/profile_mem_result_1.txt")
+    
+    memFile = open("results/profile_mem_result_1.txt")
+    newFile = ""
+    
+    for line in memFile:
+        if "(nil)" in line:
+            newFile += line.replace('(nil)', '0x0')
+        else:
+            newFile += line
+            
+    mem_f = open("results/profile_mem_result.txt", 'w')
+    mem_f.write(newFile)
+    mem_f.close()
+    
+    os.remove("results/profile_mem_result_1.txt")
+    
 def execute_trident():
     
     print "\n*********************************\nTracing memory level propagation ...\n\n"
@@ -120,12 +127,22 @@ def execute_trident():
     print "\n*********************************\nValiadating model at 3 levels, fi_breakdown.txt must be in place for the input. Results will be in prediction.results ...\n\n"
     os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
 
+# Main function
 if __name__ == "__main__":
 
-    if sys.argv[1] == '1':
+    if sys.argv[1] == 'index':
+
+        # Index the instructions and get the IR file
+        collectData("instIndexer", "", True)
+    
+        # Convert opt_bamboo_after.ll into readable format
+        os.system(LLVM_PATH + "/bin/llvm-dis indexed.ll -o readable_indexed.ll")
+        os.remove("indexed.ll")
+        
+    elif sys.argv[1] == 'profile':
         profile()
     
-    elif sys.argv[1] == '2': 
+    elif sys.argv[1] == 'execute': 
         execute_trident()
     
     else:

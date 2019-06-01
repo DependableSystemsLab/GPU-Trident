@@ -153,8 +153,9 @@ for cmpIndex in cmpLineDic:
             cmpMaskingDic[cmpIndex] = fMaskingCase*fProb + tMaskingCase*tProb
         else:
             # Unknown cases
-            print "#Un-executed Int Case " + `cmpIndex`
-            cmpMaskingDic[cmpIndex] = 0
+            pass
+            #print "#Un-executed Int Case " + `cmpIndex`
+            #cmpMaskingDic[cmpIndex] = 0
 
     elif "float" in typeStr or "double" in typeStr:
         dataWidth = 0

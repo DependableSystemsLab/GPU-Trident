@@ -116,6 +116,33 @@ with open(irPath, 'r') as irf:
 
 # Write to inst_tuples.txt
 os.system("rm results/inst_tuples.txt")
-with open("results/inst_tuples.txt", "w") as wf:
+with open("results/inst_tuples_1.txt", "w") as wf:
     for index in tuplePropDic:
         wf.write(`index` + " <" + `tuplePropDic[index]` + "," + `tupleMaskingDic[index]` + "," + `tupleCrashDic[index]` + ">\n")
+
+
+k_range = open("kernel_range.txt", 'r')
+
+
+k_range_lines = []
+
+for line in k_range:
+    k_range_lines.append(int(line))
+
+k_range.close()
+
+inst_tuple_file = open("results/inst_tuples_1.txt")
+
+new_file = ""
+
+for line in inst_tuple_file:
+    if k_range_lines[0] <= int(line.split()[0]) <= k_range_lines[1]:
+        new_file += line
+
+wf = open("results/inst_tuples.txt", 'w+')
+
+wf.write(new_file)
+
+wf.close()
+
+os.system("rm results/inst_tuples_1.txt")
