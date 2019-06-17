@@ -90,18 +90,26 @@ static long getBambooIndex(Instruction* inst){
 }
 
 static void addProfileFunctionCall(Instruction* BI, Module* module){
-	std::vector<Value*> checker_args(1);
+   
+    BasicBlock::iterator nextInst = BI;
+	nextInst++;
+	Instruction* instPos = nextInst;
+	std::vector<Value*> checker_args(2);
 	Value* indexValue = ConstantInt::get(Type::getInt64Ty(BI->getContext()), getBambooIndex(BI));
-	checker_args[0] = indexValue;
+	checker_args[0] = BI;
+	checker_args[1] = indexValue;
 	ArrayRef<Value*> args(checker_args);
 
-	std::vector<Type*> checker_arg_types(1);
-	checker_arg_types[0] = Type::getInt64Ty(module->getContext());
+	std::vector<Type*> checker_arg_types(2);
+	//checker_arg_types[0] = Type::getInt64Ty(module->getContext());
+	checker_arg_types[0] = BI->getType();
+	checker_arg_types[1] = indexValue->getType();
+	
 	ArrayRef<Type*> argsTypes(checker_arg_types);
 	FunctionType* checker_type = FunctionType::get(Type::getVoidTy(BI->getContext()), argsTypes, false);
-	Constant* checker_handler_c = module->getOrInsertFunction("profileCount", checker_type);
+	Constant* checker_handler_c = module->getOrInsertFunction("profileCmp", checker_type);
 	Function* checker_handler = dyn_cast<Function>(checker_handler_c);
-	CallInst::Create(checker_handler, args, "", BI);
+	CallInst::Create(checker_handler, args, "", instPos);
 	//errs() << "opcode:" << BI->getOpcode() << " index:" << getBambooIndex(BI) << "\n";
 }
 
@@ -176,7 +184,6 @@ static void modifyModule(Module* module){
 					hasReturnValue = true;
 				}
 
-                // If so, we index it
                 if(hasReturnValue == true && !isa<AllocaInst>(BI) ) {
                     indexInstruction(BI);
                 }
@@ -207,9 +214,9 @@ static void modifyModule(Module* module){
 			for(BasicBlock::iterator BI = BB->begin(), BE = BB->end(); BI != BE; ++BI) {
 
 				int opcode = BI->getOpcode();
-
-				// Add profile function call
-				if( getBambooIndex(BI) != -1 && opcode > 8 && opcode != 27 && opcode != 29 && opcode != 48/* && opcode != 49*/)
+				    
+				/* Add profile function call */
+				if( getBambooIndex(BI) != -1 && opcode == 46 || opcode == 47)
 				{
 					addProfileFunctionCall(BI, module);
 				}
@@ -217,7 +224,7 @@ static void modifyModule(Module* module){
 		}
 	}	
 
-	errs() << "Instruction count pass installed ... \n"; 
+	errs() << "Compare instruction pass installed ... \n"; 
 
 }
 

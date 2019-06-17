@@ -1,4 +1,3 @@
-
 #include <llvm/Constants.h>
 #include <llvm/Instructions.h>
 #include <llvm/LLVMContext.h>
@@ -30,27 +29,27 @@ using namespace std;
 static void* libnvvm = NULL;
 
 #define bind_lib(lib) \
-	if (!libnvvm) \
+    if (!libnvvm) \
 { \
-	libnvvm = dlopen(lib, RTLD_NOW | RTLD_GLOBAL); \
-	if (!libnvvm) \
-	{ \
-		fprintf(stderr, "Error loading %s: %s\n", lib, dlerror()); \
-		abort(); \
-	} \
+    libnvvm = dlopen(lib, RTLD_NOW | RTLD_GLOBAL); \
+    if (!libnvvm) \
+    { \
+        fprintf(stderr, "Error loading %s: %s\n", lib, dlerror()); \
+        abort(); \
+    } \
 }
 
 #define bind_sym(handle, sym, retty, ...) \
-	typedef retty (*sym##_func_t)(__VA_ARGS__); \
+    typedef retty (*sym##_func_t)(__VA_ARGS__); \
 static sym##_func_t sym##_real = NULL; \
 if (!sym##_real) \
 { \
-	sym##_real = (sym##_func_t)dlsym(handle, #sym); \
-	if (!sym##_real) \
-	{ \
-		fprintf(stderr, "Error loading %s: %s\n", #sym, dlerror()); \
-		abort(); \
-	} \
+    sym##_real = (sym##_func_t)dlsym(handle, #sym); \
+    if (!sym##_real) \
+    { \
+        fprintf(stderr, "Error loading %s: %s\n", #sym, dlerror()); \
+        abort(); \
+    } \
 }
 
 struct InstTuple {
@@ -66,15 +65,20 @@ struct InstNode {
     float accumCR;
 };
 
-		// record crash rate
+// record crash rate
 float avCR = 0;
 float totalCR = 0;
 long cRCount = 0;
-		
+
+float avCR_s = 0;
+float totalCR_s = 0;
+long cRCount_s = 0;
+        
 std::map<long, InstTuple*> instTupleMap;
 std::map<long, long long> instCountMap;
 
 std::vector<Value*> visitedInstVector;
+std::vector<long> shared_stores;
 
 static Module* initial_module = NULL;
 
@@ -121,16 +125,19 @@ void checkNextUseInst(InstNode* curNode) {
     Instruction* curInst = curNode->nodeInst;
     Value* curValue = dyn_cast<Value>(curInst);
     
+    //DBG:printf("\n\n\n\nInside function call\n\r");
     if( std::find(visitedInstVector.begin(), visitedInstVector.end(), curValue) != visitedInstVector.end() ) {
+        //DBG:printf("Returning from start\n");
         return;
     }
+    
     
     // Process current node
     //////////////////////////////////////////////////////////////////////////////////
     // DEBUG
     //errs() << curInst->getOpcode() << " " << getLLFIIndexofInst(curInst) << " ";
     //if(isa<CallInst>(curInst)){
-    //	errs() << dyn_cast<CallInst>(curInst)->getCalledFunction()->getName();
+    //  errs() << dyn_cast<CallInst>(curInst)->getCalledFunction()->getName();
     //}
     //printf(" --> curAccum: %.6f, %.6f, %.6f\n", curNode->accumPR, curNode->accumMR, curNode->accumCR);
     //////////////////////////////////////////////////////////////////////////////////
@@ -140,8 +147,8 @@ void checkNextUseInst(InstNode* curNode) {
     // If it is a terminator, add to global accum
     long curInstIndex = getBambooIndex(curInst);
     long curInstOpcode = curInst->getOpcode();
-    //printf("OC:%ld\n", curInstOpcode);
-    //printf("InstI:%ld\n", curInstIndex);
+    //DBG:printf("Current instruction:%ld\n", curInstIndex);
+    
     if( (curInstOpcode == 2 && dyn_cast<BranchInst>(curInst)->isConditional()) || curInstOpcode == 29 /*|| curInstOpcode == 49*/ ) {
         // Result
         if(isa<StoreInst>(curInst)) {
@@ -169,9 +176,14 @@ void checkNextUseInst(InstNode* curNode) {
     while(UI!=UE) {
     
         Instruction* childInst = dyn_cast<Instruction>(*UI);
+        
+        long child_curInstIndex = getBambooIndex(childInst);
+        
+        //DBG:printf("Current child instruction:%ld\n", child_curInstIndex);
 
         if( std::find(visitedInstVector.begin(), visitedInstVector.end(), childInst) == visitedInstVector.end() ) {
-            
+            //DBG:printf("Inside if\n");
+        
             //printf("Inside\n");
             nextIterateInst = *UI;
             InstNode* nextNode = new InstNode;
@@ -182,18 +194,35 @@ void checkNextUseInst(InstNode* curNode) {
 
             long nextInstIndex = getBambooIndex(childInst);
             
+            //DBG:printf("Loop inst_index:%ld\n", nextInstIndex);
+            
             float nextCR = instTupleMap[nextInstIndex]->cR;
             
             float nextPR = instTupleMap[nextInstIndex]->pR;
             float nextMR = instTupleMap[nextInstIndex]->mR;
 
+            //DBG:printf("Before -- nextCR: %.6f, nextPR: %.6f, nextMR: %.6f \n", nextCR, nextPR, nextMR);
+
             // Check if the next inst is a store
             if(isa<StoreInst>(childInst)) {
+                // Cur inst is used as pointer in the next store inst
                 if( dyn_cast<StoreInst>(childInst)->getPointerOperand() == curInst ) {
-                    // Cur inst is used as pointer in the next store inst
-                    nextCR = avCR;
-                    nextPR = 1 - avCR;
-                    nextMR = 0;
+                    
+                    //if the store instruction is a shared store
+                    if (std::find(shared_stores.begin(), shared_stores.end(), nextInstIndex) != shared_stores.end()){
+                        
+                        nextCR = avCR_s;
+                        nextPR = 0.5 - avCR_s;
+                        nextMR = 0.5;
+                    }
+                    else {
+                        
+                        // Cur inst is used as pointer in the next store inst
+                        nextCR = avCR;
+                        nextPR = 1 - avCR;
+                        nextMR = 0;    
+                    }
+                    
                     //errs() << "Used in store as adrs\n";
                 } else {
                     // This is because STORE has 2 types of tuples depending on its input position.
@@ -203,7 +232,7 @@ void checkNextUseInst(InstNode* curNode) {
                 }
             }
 
-            //printf(" -- nextCR: %.f, nextPR: %.f, nextMR: %.f \n", nextCR, nextPR, nextMR);
+            //DBG:printf(" -- nextCR: %.6f, nextPR: %.6f, nextMR: %.6f \n", nextCR, nextPR, nextMR);
 
             // Save to next node with accum info
             // Update accum propagation
@@ -212,7 +241,14 @@ void checkNextUseInst(InstNode* curNode) {
 
             // Update accum masking
             nextNode->accumMR = 1 - nextNode->accumPR - nextNode->accumCR;
+
+            //DBG:printf(" accumPR: %.6f, accumCR: %.6f, accumMR: %.6f \n", nextNode->accumPR, nextNode->accumCR, nextNode->accumMR);
+
             childStack.push(nextNode);
+        }
+        else
+        {
+            //DBG:printf("Inside else\n");
         }
         UI++;
     }
@@ -297,6 +333,39 @@ static void modifyModule(Module* module) {
 }
 
 void readSTuples() {
+
+    std::ifstream select_shared_file;
+    select_shared_file.open(getenv("SHARED_FILE"));
+    if(!select_shared_file.is_open()) {
+        errs()<<"\nERROR: can not open shared memory file!\n";
+        exit(1);
+    }
+
+    while(select_shared_file.good()) {
+        std::string line;
+        getline(select_shared_file, line);
+        if(line.empty())        continue;
+        else {
+            std::string input = line.c_str();
+            std::istringstream ss(input);
+            std::string token;
+
+            std::vector<int> eleVector;
+            while(std::getline(ss, token, '\n')) {
+                float num = 0;
+                std::stringstream convert(token);
+                convert >> num;
+                eleVector.push_back(num);
+            }
+            long index = (long)eleVector.at(0);
+            shared_stores.push_back(index);
+        }
+    }
+
+    //for(int i=0; i < shared_stores.size(); i++)
+    //std::cout << shared_stores.at(i) << ' ';
+    //std::cout << "\n"
+    
     std::ifstream select_stuples_file;
     select_stuples_file.open(getenv("STUPLE_FILE"));
     if(!select_stuples_file.is_open()) {
@@ -329,12 +398,22 @@ void readSTuples() {
             it->mR = mR;
             it->cR = cR;
             instTupleMap[index] = it;
-            //printf("%ld %.6f %.6f %.6f\n", index, pR, mR, cR);
+            //printf("%ld %.6f %.6f %.6f\n", index, instTupleMap[index]->cR, instTupleMap[index]->pR, instTupleMap[index]->mR);
 
             if(cR > 0) {
-                totalCR += cR;
-                cRCount++;
-                avCR = totalCR / cRCount;
+
+                if (std::find(shared_stores.begin(), shared_stores.end(), index) != shared_stores.end())
+                {
+                    totalCR_s += cR;
+                    cRCount_s++;
+                    avCR_s = totalCR_s / cRCount_s;
+                }
+                else
+                {
+                    totalCR += cR;
+                    cRCount++;
+                    avCR = totalCR / cRCount;
+                }
                 //printf("%.6f %.6f\n", totalCR, avCR);
             }
         }
@@ -404,14 +483,14 @@ nvvmResult nvvmAddModuleToProgram(nvvmProgram prog, const char *bitcode, size_t 
 static void* libc = NULL;
 
 #define bind_lib(lib) \
-	if (!libc) \
+    if (!libc) \
 { \
-	libc = dlopen(lib, RTLD_NOW | RTLD_GLOBAL); \
-	if (!libc) \
-	{ \
-		fprintf(stderr, "Error loading %s: %s\n", lib, dlerror()); \
-		abort(); \
-	} \
+    libc = dlopen(lib, RTLD_NOW | RTLD_GLOBAL); \
+    if (!libc) \
+    { \
+        fprintf(stderr, "Error loading %s: %s\n", lib, dlerror()); \
+        abort(); \
+    } \
 }
 
 static Module* optimized_module = NULL;
@@ -524,6 +603,3 @@ extern "C" void free(void* ptr)
 
     free_real(ptr);
 }
-
-
-

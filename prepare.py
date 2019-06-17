@@ -55,8 +55,60 @@ def collectData(dir_name, result_name, keep_after_ll):
     if PROGRAM_OUTPUT_NAME != "":
         os.remove(PROGRAM_OUTPUT_NAME)
 
+def prune_threads():
+
+    # Control flow steps
+    collectData("controlFlow-1", "control_flow_group-1.txt", False)
+
+    collectData("controlFlow-2", "control_flow_group-2.txt", False)
+
+    xIDs = []
+    yIDs = []
+    invo_count = []
+    representative_threads = []
+    
+    # Extract representative threads
+    output = subprocess.check_output("python parse.py", shell=True)
+
+    output = output.replace(" ", "")
+    
+    representative_threads = output.splitlines()
+
+    for thread in representative_threads:
+        indices = thread[1:-1]
+        indices = indices.split(',')
+        xIDs.append(int(indices[1]))
+        yIDs.append(int(indices[2]))
+        invo_count.append(int(indices[0]))
+
+    # Construct conditional for memory profiling
+    cond_str = "if("
+
+    for iterator in range(len(xIDs)):
+        cond = "(idx == " + str(xIDs[iterator]) + " \&\& " "call_count == " + str(invo_count[iterator]) + " \&\& " "idy == " + str(yIDs[iterator])+ ")"
+        if iterator != (len(xIDs) - 1):
+            cond += ' || '
+
+        cond_str += cond
+
+    cond_str += ")"
+
+    if (os.path.exists("libs/memPro")):
+        os.system("rm -rf libs/memPro")
+        
+    os.system("cp -r libs/memPro_std libs/memPro")
+
+    command = "sed -i 's/if (COND)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+    os.system(command)
+
 def profile():
     
+    # Profile the nummber of times each instruction is called
+    collectData("instCount", "instCountResult.txt", False)
+    
+    # Profile the average value of arguments of compare instructions
+    collectData("cmpVal", "profile_cmp_value_result.txt", False)
+
     # Profile the nummber of times each instruction is called
     collectData("instCount", "instCountResult.txt", False)
     
@@ -78,13 +130,10 @@ def profile():
                 wf.write("-- FI Index: " + index + ", : , : , : , Total FI: " + count + "\n")
     
     # Profile the number of time compare instructions resolve to 1 or 0
-    collectData("callCount", "profile_call_prob_result.txt",False)
+    #collectData("callCount", "profile_call_prob_result.txt",False)
     
     # Profile the number of time compare instructions resolve to 1 or 0
     collectData("cmpProb", "profile_cmp_prob_result.txt",False)
-    
-    # Profile the average value of arguments of compare instructions
-    collectData("cmpVal", "profile_cmp_value_result.txt", False)
     
     # Profile the average value of arguments of compare instructions
     collectData("shftVal", "profile_shift_value_result.txt", False)
@@ -97,6 +146,8 @@ def profile():
     
     # Simplify instruction Tuples
     os.system("python simplifyInstTuples.py")
+    
+    prune_threads()
     
     # Profile the load and store addreses
     collectData("memPro", "profile_mem_result.txt", False)

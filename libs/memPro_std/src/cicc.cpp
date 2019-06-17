@@ -89,20 +89,66 @@ static long getBambooIndex(Instruction* inst){
 	return -1;
 }
 
-static void addProfileFunctionCall(Instruction* BI, Module* module){
-	std::vector<Value*> checker_args(1);
-	Value* indexValue = ConstantInt::get(Type::getInt64Ty(BI->getContext()), getBambooIndex(BI));
-	checker_args[0] = indexValue;
-	ArrayRef<Value*> args(checker_args);
+static void insertForLoad(Instruction* loadInst, Module* module){
 
-	std::vector<Type*> checker_arg_types(1);
-	checker_arg_types[0] = Type::getInt64Ty(module->getContext());
+    BasicBlock::iterator nextInst = loadInst;
+	nextInst++;
+	Instruction* instPos = nextInst;
+	Value* indexValue = ConstantInt::get(Type::getInt64Ty(loadInst->getContext()), getBambooIndex(loadInst));
+	
+	Value* loadAdr = dyn_cast<LoadInst>(loadInst)->getPointerOperand();
+	
+	// Convert from ptr to int
+    CastInst* convertInst = new BitCastInst(loadAdr, Type::getInt64PtrTy(module->getContext()), "convt", instPos);
+	
+	std::vector<Value*> checker_args(2);
+	
+	checker_args[0] = convertInst;
+    checker_args[1] = indexValue;
+	
+	std::vector<Type*> checker_arg_types(2);
+	
+	checker_arg_types[0] = convertInst->getType();
+    checker_arg_types[1] = indexValue->getType();
+	
+	ArrayRef<Value*> args(checker_args);
 	ArrayRef<Type*> argsTypes(checker_arg_types);
-	FunctionType* checker_type = FunctionType::get(Type::getVoidTy(BI->getContext()), argsTypes, false);
-	Constant* checker_handler_c = module->getOrInsertFunction("profileCount", checker_type);
-	Function* checker_handler = dyn_cast<Function>(checker_handler_c);
-	CallInst::Create(checker_handler, args, "", BI);
-	//errs() << "opcode:" << BI->getOpcode() << " index:" << getBambooIndex(BI) << "\n";
+	
+	FunctionType* checker_type = FunctionType::get(Type::getVoidTy(module->getContext()), argsTypes, false);
+    Constant* checker_handler_c = module->getOrInsertFunction("profileLoadInst", checker_type);
+    Function* checker_handler = dyn_cast<Function>(checker_handler_c);
+	CallInst::Create(checker_handler, args, "", instPos);
+}
+
+static void insertForStore(Instruction* storeInst, Module* module){
+
+    BasicBlock::iterator nextInst = storeInst;
+	nextInst++;
+	Instruction* instPos = nextInst;
+	Value* indexValue = ConstantInt::get(Type::getInt64Ty(storeInst->getContext()), getBambooIndex(storeInst));
+	
+	Value* storeAdr = dyn_cast<StoreInst>(storeInst)->getPointerOperand();
+	
+	// Convert from ptr to int
+    CastInst* convertInst = new BitCastInst(storeAdr, Type::getInt64PtrTy(module->getContext()), "convt", instPos);
+	
+	std::vector<Value*> checker_args(2);
+	
+	checker_args[0] = convertInst;
+    checker_args[1] = indexValue;
+	
+	std::vector<Type*> checker_arg_types(2);
+	
+	checker_arg_types[0] = convertInst->getType();
+    checker_arg_types[1] = indexValue->getType();
+	
+	ArrayRef<Value*> args(checker_args);
+	ArrayRef<Type*> argsTypes(checker_arg_types);
+	
+	FunctionType* checker_type = FunctionType::get(Type::getVoidTy(module->getContext()), argsTypes, false);
+    Constant* checker_handler_c = module->getOrInsertFunction("profileStoreInst", checker_type);
+    Function* checker_handler = dyn_cast<Function>(checker_handler_c);
+	CallInst::Create(checker_handler, args, "", instPos);
 }
 
 static void addProfileDump(Instruction* BI, Module* module){
@@ -207,17 +253,22 @@ static void modifyModule(Module* module){
 			for(BasicBlock::iterator BI = BB->begin(), BE = BB->end(); BI != BE; ++BI) {
 
 				int opcode = BI->getOpcode();
-
+				
 				// Add profile function call
-				if( getBambooIndex(BI) != -1 && opcode > 8 && opcode != 27 && opcode != 29 && opcode != 48/* && opcode != 49*/)
+				if( getBambooIndex(BI) != -1 && opcode == 28)
 				{
-					addProfileFunctionCall(BI, module);
+					insertForLoad(BI, module);
+				}
+				
+				if (getBambooIndex(BI) != -1 && opcode == 29)
+				{
+				    insertForStore(BI, module);
 				}
 			}
 		}
 	}	
 
-	errs() << "Instruction count pass installed ... \n"; 
+	errs() << "Memory Profile Pass installed ... \n"; 
 
 }
 

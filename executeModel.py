@@ -1,7 +1,7 @@
 #! /user/bin/python
 
 import sys, os, subprocess
-#from config import OPT,LLVMPASS_FOLDER
+from config import GLOBAL_LOAD_LIST, GLOBAL_STORE_LIST
 
 ############################
 src_name = sys.argv[1]
@@ -55,7 +55,7 @@ with open("results/store_masking.txt", 'r') as sf:
 
 flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I ."
 ktraceFlag = " -D KERNELTRACE"
-makeCommand1 = "STUPLE_FILE=results/simplified_inst_tuples.txt " + "S_INDEX=" + str(targetIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
+makeCommand1 = "SHARED_FILE=shared_mem.txt STUPLE_FILE=results/simplified_inst_tuples.txt " + "S_INDEX=" + str(targetIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
 
 #print makeCommand1
 #exit()
@@ -150,6 +150,12 @@ if totalTmnInstCount != 0:
     fSdc = accumSdc / float(totalTmnInstCount)
     fCrash = accumCrash / float(totalTmnInstCount)
     fBenign = 1 - fSdc - fCrash
+    
+    if fSdc < 0:
+        fSdc = 0
+    
+    if fSdc > 1:
+        fSdc = 1
 print "\n***************************"
 print "Final SDC: " + `fSdc`
 print "Final Benign: " + `fBenign`

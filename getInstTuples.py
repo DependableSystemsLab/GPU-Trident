@@ -31,8 +31,8 @@ with open("results/crash_rate.txt", "r") as rf:
         llfiIndex = int(crashLine.split(" ")[0])
         crashRate = float(crashLine.split(" ")[1].replace("\n", ""))
         # We assume load/store has no masking in tuple - though stores have masking factor in mem dep. modeling.
-        maskingRate = 0
-        propRate = 1 - crashRate
+        maskingRate = float(crashLine.split(" ")[2].replace("\n", ""))
+        propRate = float(crashLine.split(" ")[3].replace("\n", ""))
         tuplePropDic[llfiIndex] = propRate
         tupleMaskingDic[llfiIndex] = maskingRate
         tupleCrashDic[llfiIndex] = crashRate

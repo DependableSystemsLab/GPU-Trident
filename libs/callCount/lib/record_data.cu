@@ -15,22 +15,24 @@ void bambooLogKernelBegin() {
 
 }
 
+void bambooLogRecordOff() {
+
+}
+
 void bambooLogKernelEnd() {
 
 #ifdef KERNELTRACE
-	cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 #endif
-	
-	long long resultArray[LIST_SIZE] = {0};
-	cudaMemcpyFromSymbol(&resultArray, callCountList, LIST_SIZE * sizeof(long long), 0, cudaMemcpyDeviceToHost);    
     
-	FILE *profileFile = fopen("profile_call_prob_result.txt", "w");
-	for(long long i=0; i<LIST_SIZE; i++){
-		if(resultArray[i] != 0){
-			fprintf(profileFile, "%lld: %lld\n", i, resultArray[i]);
-		}
-	}
-	fclose(profileFile);
-	memset(resultArray, 0, sizeof(resultArray));
-	cudaMemcpyToSymbol(callCountList, &resultArray, LIST_SIZE * sizeof(long long), 0, cudaMemcpyHostToDevice);
+    long long resultArray[LIST_SIZE] = {0};
+    cudaMemcpyFromSymbol(&resultArray, callCountList, LIST_SIZE * sizeof(long long), 0, cudaMemcpyDeviceToHost);    
+    
+    FILE *profileFile = fopen("profile_call_prob_result.txt", "w");
+    for(long long i=0; i<LIST_SIZE; i++){
+        if(resultArray[i] != 0){
+            fprintf(profileFile, "%lld: %lld\n", i, resultArray[i]);
+        }
+    }
+    fclose(profileFile);
 }

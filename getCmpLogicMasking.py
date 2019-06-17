@@ -42,7 +42,8 @@ if targetCmpIndex not in ltCmpList:
 
     #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
-    print diffLines
+    #print "DL output:"
+    #print diffLines
     
     # Clean the copied files
     for file in file_list:
@@ -68,7 +69,7 @@ else:
 
     #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
-    print diffLines  
+    #print diffLines  
     
     # Clean the copied files
     for file in file_list:

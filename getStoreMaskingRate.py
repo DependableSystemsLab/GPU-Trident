@@ -1,9 +1,8 @@
 #! /usr/bin/python
 
-import os, sys
-import subprocess
+import os, sys, subprocess
 
-OutputStores_inst = []
+from config import GLOBAL_LOAD_LIST, GLOBAL_STORE_LIST
 
 ##########################
 src_name = sys.argv[1]
@@ -92,6 +91,13 @@ def readAllStores():
                 
                 # Get index and add
                 index = int(line.split(" ")[1])
+
+                if index not in store_index_list:
+                    store_index_list.append(index)
+
+                if index in GLOBAL_STORE_LIST:
+                    continue
+
                 if index not in storesList:
                     storesList.append(index)
                 if index not in storeMaskingDic:
@@ -118,6 +124,10 @@ def readAllStores():
             
                 # Get index and add
                 index = int(line.split(" ")[1])
+
+                if index in GLOBAL_LOAD_LIST:
+                    continue
+
                 if index not in loadsList:
                     loadsList.append(index)
                 
@@ -304,7 +314,14 @@ def getMaskingRateFromInst(initStoreIndex):
                     if "cmp" in diffLine:
                         diffCmpList.append(curIndex)
                     if "store" in diffLine:
-                        diffStoreList.append(curIndex)
+
+                        if curIndex not in GLOBAL_STORE_LIST:
+                            diffStoreList.append(curIndex)
+                        else:
+                            diffCallList.append(curIndex)
+                            depCallList.append(curIndex)
+                            
+                            
                     # Specify all standard for SDC-causing call operations
                     if "call" in diffLine and ("fopen" in diffLine or "fputs" in diffLine or "fwrite" in diffLine or "_IO_putc" in diffLine):
                         diffCallList.append(curIndex)
@@ -477,8 +494,31 @@ initMaskingAndCounts()
 print "Reading load/store runtime addresses ... "
 readAllStores()
 
+    
+inst_count_dic = {}
+
+for line in file1:
+    line = line.strip(" ")
+    index = line.split(":")[0]
+    count = line .split(":")[1].strip()
+
+    index = int(index)
+    count = int(count)
+
+    inst_count_dic[index] = count
+
+for item in store_index_list:
+    if (item - 1) in inst_count_dic:
+        instExecDic[item] = inst_count_dic[item - 1]
+    else:
+        test_key = item+1
+        while test_key not in instExecDic:
+            test_key+=1
+
+        instExecDic[item] = inst_count_dic[test_key]
+
+
 print "Calculating masking for stores ... "
-#print getMaskingRateFromInst(187)
 
 os.system("rm results/store_masking.txt")
 # Dump masking rate for every store
@@ -486,8 +526,8 @@ with open("results/store_masking.txt", 'w') as sf:
     for storeIndex in storesList:
         cmpMasking = getMaskingRateFromInst(storeIndex)
         warMasking = 0
-        if storeIndex in storeWarMaskingDic and storeIndex not in OutputStores_inst:
-            warMasking = storeWarMaskingDic[storeIndex]
+        #if storeIndex in storeWarMaskingDic and storeIndex not in GLOBAL_STORE_LIST:
+        #    warMasking = storeWarMaskingDic[storeIndex]
         totalMasking = (1-warMasking) * cmpMasking + warMasking
         print "STORE cmp masking: " + `storeIndex` + ": " + `cmpMasking` 
         print "STORE war masking: " + `storeIndex` + ": " + `warMasking` 
@@ -495,13 +535,5 @@ with open("results/store_masking.txt", 'w') as sf:
         print ""
         sf.write(`storeIndex` + " " +`(totalMasking)` + " " + `instExecDic[storeIndex]` + "\n")
 
-
-
-
-
-
-
-
-
-
-
+    for store in GLOBAL_STORE_LIST:
+        sf.write(`store` + " " +`0.0` + " " + `instExecDic[store]` + "\n")
