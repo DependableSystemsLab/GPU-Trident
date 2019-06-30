@@ -494,6 +494,9 @@ initMaskingAndCounts()
 print "Reading load/store runtime addresses ... "
 readAllStores()
 
+# Update the num counts of al the stores
+file1 = open("results/instCountResult.txt")
+
     
 inst_count_dic = {}
 

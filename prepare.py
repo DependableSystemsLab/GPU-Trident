@@ -2,6 +2,7 @@ import os, subprocess, shutil, sys
 
 # Import user provided configuration 
 from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH
+from config_gen import SHARED_MEM_USE
 
 SRC_NAME = " "+ PROGRAM_NAME + ".cu "
 OBJ_NAME = PROGRAM_NAME + ".o "
@@ -57,8 +58,22 @@ def collectData(dir_name, result_name, keep_after_ll):
 
 def prune_threads():
 
-    # Control flow steps
-    collectData("controlFlow-1", "control_flow_group-1.txt", False)
+    first_stage = True
+    stores = []
+    loads = []
+
+    param_file = open("local_param.h")
+
+    for line in param_file:
+        if "START_LOOP" in line:
+            line = line.split(" ")
+            if int(line[2]) == 0:
+                first_stage = False
+    
+    if first_stage == True:
+
+        # Control flow inside loop steps
+        collectData("controlFlow-1", "control_flow_group-1.txt", False)
 
     collectData("controlFlow-2", "control_flow_group-2.txt", False)
 
@@ -67,8 +82,10 @@ def prune_threads():
     invo_count = []
     representative_threads = []
     
+    arg = "True" if (param_file == True) else "False"
+
     # Extract representative threads
-    output = subprocess.check_output("python parse.py", shell=True)
+    output = subprocess.check_output("python parse.py " + arg, shell=True)
 
     output = output.replace(" ", "")
     
@@ -80,6 +97,17 @@ def prune_threads():
         xIDs.append(int(indices[1]))
         yIDs.append(int(indices[2]))
         invo_count.append(int(indices[0]))
+
+    shared_ls = open("shared_mem.txt")
+
+    for line in shared_ls:
+        line = line.strip()
+        line = line.split(" ")
+
+        if line[1] == 'L':
+            loads.append(line[0])
+        else:
+            stores.append(line[0])
 
     # Construct conditional for memory profiling
     cond_str = "if("
@@ -101,11 +129,119 @@ def prune_threads():
     command = "sed -i 's/if (COND)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
     os.system(command)
 
+    # Put filter for shared loads
+    cond_str = "if(!("
+
+    for iterator in range(len(loads)):
+        cond = "index==" + loads[iterator]
+        if iterator != (len(loads) - 1):
+            cond += ' || '
+
+        cond_str += cond
+
+    cond_str += "))"
+
+    command = "sed -i 's/if (LOAD)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+
+    os.system(command)
+
+    # Put filter for shared stores
+    cond_str = "if(!("
+
+    for iterator in range(len(stores)):
+        cond = "index==" + stores[iterator]
+        if iterator != (len(stores) - 1):
+            cond += ' || '
+
+        cond_str += cond
+
+    cond_str += "))"
+
+    command = "sed -i 's/if (STORE)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+
+    os.system(command)
+
+    # Profile the load and store addreses
+    collectData("memPro", "profile_mem_result.txt", False)
+
+    # If benchmark uses shared memory
+    if SHARED_MEM_USE == True:
+
+        # Rename the previous memory trace
+        os.rename("results/profile_mem_result.txt", "results/profile_mem_result.txt_1")
+
+        # Construct conditional for memory profiling
+        cond_str = "if("
+
+        for iterator in range(len(xIDs)):
+            cond = "(BX==((TX-" + str(xIDs[iterator]) + ")\/DX))" + " \&\& " "call_count == " + str(invo_count[iterator]) + " \&\& " "(BY==((TY-" + str(yIDs[iterator]) + ")\/DY))"
+            if iterator != (len(xIDs) - 1):
+                cond += ' || '
+
+            cond_str += cond
+
+        cond_str += ")"
+
+        if (os.path.exists("libs/memPro")):
+            os.system("rm -rf libs/memPro")
+        
+        os.system("cp -r libs/memPro2_std libs/memPro")
+
+        command = "sed -i 's/if (COND)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+
+        os.system(command)
+
+        # Filter for shared loads
+        cond_str = "if("
+
+        for iterator in range(len(loads)):
+            cond = "index==" + loads[iterator]
+            if iterator != (len(loads) - 1):
+                cond += ' || '
+
+            cond_str += cond
+
+        cond_str += ")"
+
+        command = "sed -i 's/if (LOAD)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+
+        os.system(command)
+
+        # Filter for shared stores
+        cond_str = "if("
+
+        for iterator in range(len(stores)):
+            cond = "index==" + stores[iterator]
+            if iterator != (len(stores) - 1):
+                cond += ' || '
+
+            cond_str += cond
+
+        cond_str += ")"
+
+        command = "sed -i 's/if (STORE)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
+
+        os.system(command)
+
+        # Profile the load and store addreses
+        collectData("memPro", "profile_mem_result.txt", False)
+
+        os.rename("results/profile_mem_result.txt", "results/profile_mem_result.txt_2")
+
+        # Concatenate the two memory traces
+        os.system("cat results/profile_mem_result.txt_1 results/profile_mem_result.txt_2 > results/profile_mem_result.txt" )
+
+        # Removing the files
+        os.remove("results/profile_mem_result.txt_1")
+        os.remove("results/profile_mem_result.txt_2")
+
+
+
 def profile():
-    
+
     # Profile the nummber of times each instruction is called
     collectData("instCount", "instCountResult.txt", False)
-    
+
     # Profile the average value of arguments of compare instructions
     collectData("cmpVal", "profile_cmp_value_result.txt", False)
 
@@ -149,9 +285,6 @@ def profile():
     
     prune_threads()
     
-    # Profile the load and store addreses
-    collectData("memPro", "profile_mem_result.txt", False)
-
     os.rename("results/profile_mem_result.txt", "results/profile_mem_result_1.txt")
     
     memFile = open("results/profile_mem_result_1.txt")

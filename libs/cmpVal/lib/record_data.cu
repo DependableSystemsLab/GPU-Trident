@@ -38,12 +38,12 @@ void bambooLogKernelEnd()
     cudaDeviceSynchronize();
 #endif
     
-    unsigned long long icmpValue1ListLocal[LIST_SIZE];
-    unsigned long long icmpValue2ListLocal[LIST_SIZE];
+    long long icmpValue1ListLocal[LIST_SIZE];
+    long long icmpValue2ListLocal[LIST_SIZE];
     double fcmpValue1ListLocal[LIST_SIZE];
     double fcmpValue2ListLocal[LIST_SIZE];
-    unsigned long long icmpCountListLocal[LIST_SIZE];
-    unsigned long long fcmpCountListLocal[LIST_SIZE];
+    long long icmpCountListLocal[LIST_SIZE];
+    long long fcmpCountListLocal[LIST_SIZE];
     
     cudaMemcpyFromSymbol(icmpValue1ListLocal, icmpValue1List, LIST_SIZE * sizeof(long long), 0, cudaMemcpyDeviceToHost);
     cudaMemcpyFromSymbol(icmpValue2ListLocal, icmpValue2List, LIST_SIZE * sizeof(long long), 0, cudaMemcpyDeviceToHost);

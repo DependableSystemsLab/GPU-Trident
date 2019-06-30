@@ -12,12 +12,16 @@ __device__ unsigned long long load_store_check[LIST_SIZE];
 __device__ unsigned long long record_flag;
 __device__ unsigned long long call_count;
 
+#define BX blockIdx.x
+#define BY blockIdx.y
+#define TX threadIdx.x
+#define TY threadIdx.y
+#define DX blockDim.x
+#define DY blockDim.y
+
 
 
 extern "C" __device__ void profileLoadInst(long* adress, long index){
-
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    int idy = threadIdx.y + blockIdx.y * blockDim.y;
 
     if (record_flag == 0)
         return;
@@ -36,9 +40,6 @@ extern "C" __device__ void profileLoadInst(long* adress, long index){
 
 extern "C" __device__ void profileStoreInst(long* adress, long index){
     
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    int idy = threadIdx.y + blockIdx.y * blockDim.y;
-
     if (record_flag == 0)
         return;
     
@@ -51,6 +52,7 @@ extern "C" __device__ void profileStoreInst(long* adress, long index){
             atomicAdd(&load_store_index[local_index], index);
             atomicAdd(&load_store_check[local_index], 1);
         }
+
     }
 }
 
