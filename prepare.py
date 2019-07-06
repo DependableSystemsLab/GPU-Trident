@@ -1,8 +1,9 @@
 import os, subprocess, shutil, sys
 
 # Import user provided configuration 
-from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH
-from config_gen import SHARED_MEM_USE
+from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST
+from config_gen import SHARED_MEM_USE, DO_REDUCTION, start_index, X_threads, Y_threads, end_index
+from string import Template
 
 SRC_NAME = " "+ PROGRAM_NAME + ".cu "
 OBJ_NAME = PROGRAM_NAME + ".o "
@@ -56,7 +57,22 @@ def collectData(dir_name, result_name, keep_after_ll):
     if PROGRAM_OUTPUT_NAME != "":
         os.remove(PROGRAM_OUTPUT_NAME)
 
+def populate_file():
+
+    file1 = open('local_param.h', 'w')
+
+    #Read the value from config_gen and put in the local_param.h
+    file1.write('#define X_MAX '+ `X_threads`)
+    file1.write('\n#define Y_MAX ' + `Y_threads`)
+    file1.write('\n\n#define START_LOOP ' + `start_index`)
+    file1.write('\n#define END_LOOP ' + `end_index`)
+
+    file1.close()
+
 def prune_threads():
+
+    #Populate the local_param.h file
+    populate_file()
 
     first_stage = True
     stores = []
@@ -64,17 +80,16 @@ def prune_threads():
 
     param_file = open("local_param.h")
 
-    for line in param_file:
-        if "START_LOOP" in line:
-            line = line.split(" ")
-            if int(line[2]) == 0:
-                first_stage = False
+    if start_index == 0:
+        first_stage = False
     
     if first_stage == True:
+    	print "Profiling 1st stage of memory profiling"
 
         # Control flow inside loop steps
         collectData("controlFlow-1", "control_flow_group-1.txt", False)
 
+    print "Profiling 2nd stage of memory profiling"
     collectData("controlFlow-2", "control_flow_group-2.txt", False)
 
     xIDs = []
@@ -82,7 +97,7 @@ def prune_threads():
     invo_count = []
     representative_threads = []
     
-    arg = "True" if (param_file == True) else "False"
+    arg = "True" if (first_stage == True) else "False"
 
     # Extract representative threads
     output = subprocess.check_output("python parse.py " + arg, shell=True)
@@ -236,6 +251,53 @@ def prune_threads():
         os.remove("results/profile_mem_result.txt_2")
 
 
+def pofile_lucky_stores():
+
+    cond_str = "if("
+
+    for store_index in GLOBAL_STORE_LIST:
+        cond = "index == " + str(store_index)
+        cond += ' || '
+
+        cond_str += cond
+
+    cond_str = cond_str[:-4]
+    cond_str += ")"
+
+    if (os.path.exists("libs/memValPro")):
+        os.system("rm -rf libs/memValPro")
+        
+    os.system("cp -r libs/memValPro_std libs/memValPro")
+
+    command = "sed -i 's/if (INDEX)/" + cond_str + "/' libs/memValPro/lib/memValPro.cu"
+    
+    os.system(command)
+
+    collectData("memValPro", "profile_mem_val_result.txt", False)
+
+    file1 = open("results/profile_mem_val_result.txt")
+    val_zero = 0
+    count = 0
+
+    for line in file1:
+    	line = line.strip()
+        line = line.split(" ")
+        val = float(line[1])
+
+        if val == 0:
+            val_zero += 1
+
+        count += 1
+
+    file1.close()
+
+    file1 = open("results/lucky_store_details.txt", 'w')
+
+    file1.write(str(count) + "\n")
+    file1.write(str(val_zero) + "\n")
+    file1.write(str(float(val_zero)/count))
+
+    file1.close()
 
 def profile():
 
@@ -283,7 +345,11 @@ def profile():
     # Simplify instruction Tuples
     os.system("python simplifyInstTuples.py")
     
-    prune_threads()
+    if DO_REDUCTION == True:
+        prune_threads()
+    else:
+        collectData("memPro", "profile_mem_result.txt", False)
+
     
     os.rename("results/profile_mem_result.txt", "results/profile_mem_result_1.txt")
     
@@ -301,6 +367,9 @@ def profile():
     mem_f.close()
     
     os.remove("results/profile_mem_result_1.txt")
+
+    pofile_lucky_stores()
+
     
 def execute_trident():
     
@@ -310,6 +379,28 @@ def execute_trident():
     # Validating model at 3 level
     print "\n*********************************\nValiadating model at 3 levels, fi_breakdown.txt must be in place for the input. Results will be in prediction.results ...\n\n"
     os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
+
+    with open("results/prediction.results", 'r') as f:
+        lines = f.read().splitlines()
+        SDC = float(lines[-3].split(":")[1])
+        SDC_l = lines[-3].split(":")[0]
+        Benign = float(lines[-2].split(":")[1])
+        Benign_l = lines[-2].split(":")[0]
+        Crash = float(lines[-1].split(":")[1])
+        Crash_l = lines[-1].split(":")[0]
+
+    with open("results/lucky_store_details.txt", 'r') as f:
+        lines = f.read().splitlines()
+        factor = float(lines[-1])
+
+    SDC = (1 - factor)*SDC
+    Benign = Benign + (factor)*SDC
+
+    with open("results/prediction.results", 'a') as f:
+        f.write("\n----After lucky store corrections\n")
+        f.write(SDC_l + ":" + str(SDC) + "\n")
+        f.write(Benign_l + ":" + str(Benign) + "\n")
+        f.write(Crash_l + ":" + str(Crash))
 
 # Main function
 if __name__ == "__main__":
