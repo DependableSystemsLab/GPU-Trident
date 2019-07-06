@@ -71,6 +71,8 @@ adrsReadCountDic = {}
 adrsWarMaskingDic = {}
 storeWarMaskingDic = {}
 
+store_index_list = []
+
 # Read all stores/loads from 'profile_mem_result.txt'
 def readAllStores():
 
