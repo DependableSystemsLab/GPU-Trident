@@ -131,6 +131,11 @@ static void insertForStore(Instruction* storeInst, Module* module){
 
     Value* indexValue = ConstantInt::get(Type::getInt64Ty(storeInst->getContext()), getBambooIndex(storeInst));
 
+    if (dyn_cast<StoreInst>(storeInst)->getValueOperand()->getType()->isPointerTy())
+    {
+        return;
+    }
+
     if (dyn_cast<StoreInst>(storeInst)->getValueOperand()->getType()->isIntegerTy())
     {
         if (dyn_cast<StoreInst>(storeInst)->getOperand(0)->getType()->isIntegerTy(64) != true)
@@ -242,7 +247,7 @@ static void modifyModule(Module* module){
         }
     }   
 
-    errs() << "Memory Profile Pass installed ... \n"; 
+    errs() << "Memory Value Profile Pass installed ... \n"; 
 
 }
 
