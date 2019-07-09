@@ -1,7 +1,7 @@
 import os, subprocess, shutil, sys
 
 # Import user provided configuration 
-from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST
+from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST, EXEC_MODE
 from config_gen import SHARED_MEM_USE, DO_REDUCTION, start_index, X_threads, Y_threads, end_index
 from string import Template
 
@@ -378,7 +378,10 @@ def execute_trident():
     
     # Validating model at 3 level
     print "\n*********************************\nValiadating model at 3 levels, fi_breakdown.txt must be in place for the input. Results will be in prediction.results ...\n\n"
-    os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
+    if EXEC_MODE == 0:
+        os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
+    else:
+        os.system("python validateModel_m.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
 
     with open("results/prediction.results", 'r') as f:
         lines = f.read().splitlines()

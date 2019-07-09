@@ -1,7 +1,5 @@
 import math
-
-#shared memory is 2.18 KB
-total_shared_mem_size = 64
+from config_gen import total_shared_mem_size
 
 #Total global memory
 total_memory = 64
