@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "local_param.h"
 
-__device__ float control_flow_rec[Y_MAX][X_MAX][1000];
+__device__ float control_flow_rec[Y_MAX][X_MAX][CF_1_NUM];
 __device__ int count[Y_MAX][X_MAX];
 
 extern "C" __device__ void profileCmp(int cmpResult, long index)

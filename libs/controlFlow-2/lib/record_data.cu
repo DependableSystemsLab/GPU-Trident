@@ -10,14 +10,14 @@
 #include <device_launch_parameters.h>
 #include "local_param.h"
 
-extern "C" __device__ float control_flow_rec[Y_MAX][X_MAX][1000];
+extern "C" __device__ float control_flow_rec[Y_MAX][X_MAX][CF_2_NUM];
 extern "C" __device__ int count[Y_MAX][X_MAX];
 
 int lc;
 
 void bambooLogKernelBegin(long long int invoc_count) {
 
-    float controlflow[1000];
+    float controlflow[CF_2_NUM];
     int local_count[1] = {0};
 
     memset(controlflow, 0, sizeof(controlflow));
@@ -26,7 +26,7 @@ void bambooLogKernelBegin(long long int invoc_count) {
     {
         for (long long j =0; j < X_MAX; j++)
         {
-            cudaMemcpyToSymbol(control_flow_rec, controlflow, 1000 * sizeof(float), j*1000*sizeof(float) + sizeof(float)*i*X_MAX*1000, cudaMemcpyHostToDevice);
+            cudaMemcpyToSymbol(control_flow_rec, controlflow, CF_2_NUM * sizeof(float), j*CF_2_NUM*sizeof(float) + sizeof(float)*i*X_MAX*CF_2_NUM, cudaMemcpyHostToDevice);
             cudaMemcpyToSymbol(count, local_count, sizeof(int), j* sizeof(int) + sizeof(int)*i*X_MAX, cudaMemcpyHostToDevice);
         }
     }
@@ -38,7 +38,7 @@ void bambooLogRecordOff()
 {
     cudaDeviceSynchronize();
 
-    float controlflow[1000];
+    float controlflow[CF_2_NUM];
 
     memset(controlflow, 0, sizeof(controlflow));
 
@@ -51,11 +51,11 @@ void bambooLogRecordOff()
     {
         for (long long j =0; j < X_MAX; j++)
         {
-            cudaMemcpyFromSymbol(controlflow, control_flow_rec, 1000 * sizeof(float), j*1000*sizeof(float) + sizeof(float)*k*X_MAX*1000, cudaMemcpyDeviceToHost);
+            cudaMemcpyFromSymbol(controlflow, control_flow_rec, CF_2_NUM * sizeof(float), j*CF_2_NUM*sizeof(float) + sizeof(float)*k*X_MAX*CF_2_NUM, cudaMemcpyDeviceToHost);
 
             fprintf(profileFile1, "%d %lld %lld:", lc, j, k);
 
-            for (long long i = 0; i < 1000 && controlflow[i] != 0; i++)
+            for (long long i = 0; i < CF_2_NUM && controlflow[i] != 0; i++)
             {
                 temp = (int)floor(controlflow[i]);
 

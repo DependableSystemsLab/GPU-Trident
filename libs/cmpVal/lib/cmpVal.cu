@@ -45,11 +45,11 @@ extern "C" __device__ void profileICmpValue(long cmpValue1,long cmpValue2, long 
 }
 
 extern "C" __device__ void profileFCmpValue(double cmpValue1,double cmpValue2, long index)
-{	
+{
     if (record_flag == 0)
         return;
         
-    atomicAdd(&icmpCountList[index],1);
+    atomicAdd(&fcmpCountList[index],1);
     atomicAdd(&fcmpValue1List[index], cmpValue1);
     atomicAdd(&fcmpValue2List[index], cmpValue2);
 }

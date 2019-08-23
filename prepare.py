@@ -1,7 +1,7 @@
 import os, subprocess, shutil, sys
 
 # Import user provided configuration 
-from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST, EXEC_MODE
+from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST, EXEC_MODE, CF_STAGE_1_NUM, CF_STAGE_2_NUM
 from config_gen import SHARED_MEM_USE, DO_REDUCTION, start_index, X_threads, Y_threads, end_index
 from string import Template
 
@@ -66,6 +66,9 @@ def populate_file():
     file1.write('\n#define Y_MAX ' + `Y_threads`)
     file1.write('\n\n#define START_LOOP ' + `start_index`)
     file1.write('\n#define END_LOOP ' + `end_index`)
+
+    file1.write('\n\n#define CF_1_NUM ' + `CF_STAGE_1_NUM`)
+    file1.write('\n#define CF_2_NUM ' + `CF_STAGE_2_NUM`)
 
     file1.close()
 
