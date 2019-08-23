@@ -45,6 +45,18 @@ with open("results/profile_shift_value_result.txt", 'r') as psf:
         aV = int(shiftLine.split(": ")[1].split(" ")[0])
         shiftAvDic[llfiIndex] = aV
 
+# Read profile_shift_value_result.txt
+with open("results/profile_mul_value_result.txt", 'r') as psf:
+    mulLines = psf.readlines()
+    for mulLine in mulLines:
+        llfiIndex = int(mulLine.split(" ")[0])
+        totalCount = int(mulLine.split(" ")[1])
+        zeroProb1 = 0.5*int(mulLine.split(" ")[2])/float(totalCount)
+        zeroProb2 = 0.5*int(mulLine.split(" ")[3])/float(totalCount)
+        tuplePropDic[llfiIndex] = 1 - zeroProb1 - zeroProb2
+        tupleMaskingDic[llfiIndex] = zeroProb1 + zeroProb2
+        tupleCrashDic[llfiIndex] = 0
+
 
 next_inst_present = True
 llfiIndex = 0
