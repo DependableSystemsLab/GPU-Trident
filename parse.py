@@ -84,7 +84,7 @@ for line in file1:
 
     if line == "":
         continue
-
+        
     temp_list = sorted(list(hash_table[call_count][y][x]))
 
     line += '-'

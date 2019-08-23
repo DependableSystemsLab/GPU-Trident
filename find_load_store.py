@@ -14,7 +14,7 @@ dataWidth = 64
 
 global_crashRate = (dataWidth - benignBits) / float(dataWidth)
 
-#global_crashRate = 0.65
+global_crashRate = 0.75
 #shared_crashRate = 0.65
 
 kernel_list = []

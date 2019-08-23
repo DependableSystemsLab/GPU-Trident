@@ -2,6 +2,11 @@
 
 import sys, os, subprocess
 from config import GLOBAL_LOAD_LIST, GLOBAL_STORE_LIST
+from shutil import copyfile, rmtree
+from config_gen import src_list, domi_list, domi_val
+
+DOMI_CHECK = False
+DOMI_INDEX = []
 
 ############################
 src_name = sys.argv[1]
@@ -66,8 +71,11 @@ os.system("cp libs/staticInstModel/lib/* .")
 
 simOutput = subprocess.check_output(makeCommand1, shell=True)
 
-#p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-#simOutput = p.stdout.read()
+
+for num in domi_list:
+    if str(num) + " cmp:" in simOutput:
+        DOMI_CHECK = True 
+        DOMI_INDEX.append(domi_list.index(num))
 
 # Clean the copied files
 for file in file_list:
@@ -146,6 +154,7 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
 fSdc = 0
 fCrash = 0
 fBenign = 1
+
 if totalTmnInstCount != 0:
     fSdc = accumSdc / float(totalTmnInstCount)
     fCrash = accumCrash / float(totalTmnInstCount)
@@ -156,7 +165,19 @@ if totalTmnInstCount != 0:
     
     if fSdc > 1:
         fSdc = 1
+
+scale = fSdc
+for nums in DOMI_INDEX:
+    scale = (1 - domi_val[nums])*fSdc
+
+fSdc = scale
+fBenign += (fSdc -scale)
+
 print "\n***************************"
 print "Final SDC: " + `fSdc`
 print "Final Benign: " + `fBenign`
 print "Final Crash: " + `fCrash`
+
+os.chdir("..")
+if os.path.exists("Inst" + `targetIndex`):
+    rmtree("Inst" + `targetIndex`)

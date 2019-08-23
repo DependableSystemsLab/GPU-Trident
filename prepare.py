@@ -84,7 +84,7 @@ def prune_threads():
         first_stage = False
     
     if first_stage == True:
-    	print "Profiling 1st stage of memory profiling"
+        print "Profiling 1st stage of memory profiling"
 
         # Control flow inside loop steps
         collectData("controlFlow-1", "control_flow_group-1.txt", False)
@@ -276,26 +276,32 @@ def pofile_lucky_stores():
     collectData("memValPro", "profile_mem_val_result.txt", False)
 
     file1 = open("results/profile_mem_val_result.txt")
-    val_zero = 0
-    count = 0
+
+    zero_count_dic = {}
+    total_count_dic = {}
 
     for line in file1:
-    	line = line.strip()
+        line = line.strip()
         line = line.split(" ")
         val = float(line[1])
+        index = int(line[0])
+
+        if index not in zero_count_dic:
+            zero_count_dic[index] = 0
+            total_count_dic[index] = 0
 
         if val == 0:
-            val_zero += 1
+            zero_count_dic[index]+=1
 
-        count += 1
-
+        total_count_dic[index]+=1
+        
     file1.close()
 
     file1 = open("results/lucky_store_details.txt", 'w')
 
-    file1.write(str(count) + "\n")
-    file1.write(str(val_zero) + "\n")
-    file1.write(str(float(val_zero)/count))
+    for index in zero_count_dic:
+
+        file1.write(str(index) + " " + str(float(zero_count_dic[index])/total_count_dic[index]) + "\n")
 
     file1.close()
 
@@ -309,6 +315,9 @@ def profile():
 
     # Profile the nummber of times each instruction is called
     collectData("instCount", "instCountResult.txt", False)
+
+    # Profile the average value of multiply operands
+    collectData("mulPro", "profile_mul_value_result.txt", False)
     
     # Record load and store instruction and crash rate "Temp here"
     os.system("python find_load_store.py > results/crash_rate.txt")
@@ -382,28 +391,6 @@ def execute_trident():
         os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
     else:
         os.system("python validateModel_m.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
-
-    with open("results/prediction.results", 'r') as f:
-        lines = f.read().splitlines()
-        SDC = float(lines[-3].split(":")[1])
-        SDC_l = lines[-3].split(":")[0]
-        Benign = float(lines[-2].split(":")[1])
-        Benign_l = lines[-2].split(":")[0]
-        Crash = float(lines[-1].split(":")[1])
-        Crash_l = lines[-1].split(":")[0]
-
-    with open("results/lucky_store_details.txt", 'r') as f:
-        lines = f.read().splitlines()
-        factor = float(lines[-1])
-
-    SDC = (1 - factor)*SDC
-    Benign = Benign + (factor)*SDC
-
-    with open("results/prediction.results", 'a') as f:
-        f.write("\n----After lucky store corrections\n")
-        f.write(SDC_l + ":" + str(SDC) + "\n")
-        f.write(Benign_l + ":" + str(Benign) + "\n")
-        f.write(Crash_l + ":" + str(Crash))
 
 # Main function
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 import os, sys, subprocess
 
 from config import GLOBAL_LOAD_LIST, GLOBAL_STORE_LIST
+from config_gen import DO_REDUCTION
 
 ##########################
 src_name = sys.argv[1]
@@ -15,6 +16,7 @@ profileMemLinesList = [] # Saves all profiled line from mem result.
 cmpMaskingDic = {}
 instExecDic = {}
 instTupleDic = {}
+OutputStoreMasking = {}
 
 # Read cmpMasking list and cmp/call execution counts
 def initMaskingAndCounts():
@@ -97,6 +99,12 @@ def readAllStores():
                 if index not in store_index_list:
                     store_index_list.append(index)
 
+                # Record store counts
+                if DO_REDUCTION == False:
+                    if index not in instExecDic:
+                        instExecDic[index] = 0
+                    instExecDic[index] += 1
+
                 if index in GLOBAL_STORE_LIST:
                     continue
 
@@ -115,11 +123,6 @@ def readAllStores():
                 if adrs not in adrsWriteCountDic:
                     adrsWriteCountDic[adrs] = 0
                 adrsWriteCountDic[adrs] += 1
-
-                # Record store counts
-                if index not in instExecDic:
-                    instExecDic[index] = 0
-                instExecDic[index] += 1
                     
             if "L " in line:
                 # Load
@@ -496,31 +499,36 @@ initMaskingAndCounts()
 print "Reading load/store runtime addresses ... "
 readAllStores()
 
-# Update the num counts of al the stores
-file1 = open("results/instCountResult.txt")
-
-    
 inst_count_dic = {}
 
-for line in file1:
-    line = line.strip(" ")
-    index = line.split(":")[0]
-    count = line .split(":")[1].strip()
+if DO_REDUCTION == True:
 
-    index = int(index)
-    count = int(count)
+    # Update the num counts of al the stores
+    file1 = open("results/instCountResult.txt")
+    
+    for line in file1:
+        line = line.strip(" ")
+        index = line.split(":")[0]
+        count = line .split(":")[1].strip()
 
-    inst_count_dic[index] = count
+        index = int(index)
+        count = int(count)
 
-for item in store_index_list:
-    if (item - 1) in inst_count_dic:
-        instExecDic[item] = inst_count_dic[item - 1]
-    else:
-        test_key = item+1
-        while test_key not in instExecDic:
-            test_key+=1
+        inst_count_dic[index] = count
 
-        instExecDic[item] = inst_count_dic[test_key]
+
+    for item in store_index_list:
+        if (item - 1) in inst_count_dic:
+            instExecDic[item] = inst_count_dic[item - 1]
+            inst_count_dic[item] = inst_count_dic[item - 1]
+        else:
+            test_key = item+1
+            while test_key not in inst_count_dic:
+                test_key+=1
+
+            instExecDic[item] = inst_count_dic[test_key]
+
+    file1.close()
 
 
 print "Calculating masking for stores ... "
@@ -541,4 +549,4 @@ with open("results/store_masking.txt", 'w') as sf:
         sf.write(`storeIndex` + " " +`(totalMasking)` + " " + `instExecDic[storeIndex]` + "\n")
 
     for store in GLOBAL_STORE_LIST:
-        sf.write(`store` + " " +`0.0` + " " + `instExecDic[store]` + "\n")
+        sf.write(`store` + " " + "0.0" + " " + `instExecDic[store]` + "\n")
