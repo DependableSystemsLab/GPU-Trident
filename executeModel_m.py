@@ -141,14 +141,7 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
             p = subprocess.Popen(llCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             llOutput = p.stdout.read()
             llOutput  = llOutput.decode("utf-8")
-            print(llOutput)
-            
-            #print("OUTPUT", llOutput.split("\n"))
-            
-            #exit()
-
             llBenign = float(llOutput.split("\n")[-2])
-            #print(llBenign)
 
             if llBenign == float(-1):
                 #print("PHY node")

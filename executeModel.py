@@ -75,17 +75,12 @@ flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 
 ktraceFlag = " -D KERNELTRACE"
 makeCommand1 = "SHARED_FILE=shared_mem.txt STUPLE_FILE=results/simplified_inst_tuples.txt " + "S_INDEX=" + str(targetIndex) + " " + flagHeader + " " + src_name + " -o temp.o" + ktraceFlag
 
-#print makeCommand1
-#exit()
-
 file_list = os.listdir("libs/staticInstModel/lib")
 
 os.system("cp libs/staticInstModel/lib/* .")
 
 simOutput = subprocess.check_output(makeCommand1, shell=True)
 simOutput = simOutput.decode("utf-8")
-
-print("SO", simOutput)
 
 for num in domi_list:
     if str(num) + " cmp:" in simOutput:
@@ -130,17 +125,9 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
             p = subprocess.Popen(llCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             llOutput = p.stdout.read()
             llOutput  = llOutput.decode("utf-8")
-            print(llOutput)
-            
-            #print("OUTPUT", llOutput.split("\n"))
-            
-            #exit()
-
             llBenign = float(llOutput.split("\n")[-2])
-            #print(llBenign)
 
             if llBenign == float(-1):
-                #print("PHY node")
                 llBenign = 0
                 if targetIndex in domi_list:
                    instCount = instCountDic[targetIndex]

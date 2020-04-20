@@ -42,12 +42,9 @@ if targetCmpIndex not in ltCmpList:
 
     os.system("cp libs/nonLoopTrmSolver/lib/* .")
 
-    #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
     diffLines  = diffLines.decode("utf-8")
-    #print "DL output:"
-    print(diffLines)
-    
+
     # Clean the copied files
     for file in file_list:
         os.remove(file)
@@ -70,10 +67,8 @@ else:
 
     os.system("cp libs/loopTrmSolver/lib/* .")
 
-    #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
     diffLines  = diffLines.decode("utf-8")
-    #print diffLines  
     
     # Clean the copied files
     for file in file_list:
@@ -86,7 +81,7 @@ else:
     
 print("..........")
 
-# Read "profile_cmp_prob_result.txt"
+# Read "LLVM IR file"
 with open("readable_indexed.ll", 'r') as cmpf:
     pcLines = cmpf.readlines()
     for pcLine in pcLines:

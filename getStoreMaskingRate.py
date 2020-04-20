@@ -196,19 +196,6 @@ def readAllStores():
     print(storeWarMaskingDic)
     print("")
 
-#    for storeIndex in storeAdrsCacheDic:
-#        storeToLoadDic[storeIndex] = []
-#        adrsList = storeAdrsCacheDic[storeIndex]
-#        for adrs in adrsList:
-#            for instIndex in adrsDic[adrs]:
-#            #for loadIndex in loadAdrsCacheDic:
-#                if instIndex in loadsList and instIndex not in storeToLoadDic[storeIndex]:
-#                #if adrs in loadAdrsCacheDic[loadIndex] and loadIndex not in storeToLoadDic[storeIndex]:
-#                    storeToLoadDic[storeIndex].append(instIndex)
-        # DEBUG
-#    print(" -- Store " + `storeIndex` +" to Load List Size: " + `len(storeToLoadDic[storeIndex])`)
-    #print(storeToLoadDic)
-
 ##########################################################################
 loadToTerminatorCacheDic = {}
 
@@ -235,11 +222,6 @@ def getMaskingRateFromInst(initStoreIndex):
         globalStoreGraph[initStoreIndex] = {}
 
     while len(depStoreList) != 0:
-
-        # DEBUG
-        #print "=====>store list:"
-        #print depStoreList
-        #print ""
 
         # Pop from stack
         storeIndex = depStoreList[0]
