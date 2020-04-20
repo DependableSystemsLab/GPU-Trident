@@ -8,21 +8,25 @@ from config_gen import src_list, domi_list, domi_val
 DOMI_CHECK = False
 DOMI_INDEX = []
 
+cmp_percent = {}
+out_store = False
+
+
 ############################
 src_name = sys.argv[1]
 targetIndex = int(sys.argv[2])
 
-if os.path.exists("Inst" + `targetIndex`):
-    rmtree("Inst" + `targetIndex`)
+if os.path.exists("Inst" + str(targetIndex)):
+    rmtree("Inst" + str(targetIndex))
 
-os.system("mkdir Inst" + `targetIndex`)
-copyfile(src_name, "Inst" + `targetIndex` + "/" + src_name)
+os.system("mkdir Inst" + str(targetIndex))
+copyfile(src_name, "Inst" + str(targetIndex) + "/" + src_name)
 
 for src_file in src_list:
-    print src_file
-    copyfile(src_file, "Inst" + `targetIndex` + "/" + src_file)
+    #print src_file
+    copyfile(src_file, "Inst" + str(targetIndex) + "/" + src_file)
 
-os.chdir("Inst" + `targetIndex`)
+os.chdir("Inst" + str(targetIndex))
 ############################
 
 # Model: SIM, LM, MM
@@ -39,6 +43,11 @@ with open("../results/profile_cmp_prob_result.txt", 'r') as cmpf:
         c2 = int(pcLine.split(" ")[2])
         totalC = c1 + c2
         instCountDic[index] = totalC
+
+        if index in domi_list:
+            if c1 == 0:
+                cmp_percent[index] = False
+
     cmpf.close()
 
 
@@ -63,6 +72,15 @@ with open("../results/store_masking.txt", 'r') as sf:
         smDic[index] = sm # masking rate of store
     sf.close()
 
+with open("../results/fi_breakdown.txt", 'r') as rf:
+    lines = rf.readlines()
+    for line in lines:
+        if "--" in line:
+            index = int(line.split("FI Index: ")[1].split(",")[0])
+            count = int(line.split("Total FI: ")[1].replace("\n", ""))
+            if index not in instCountDic:
+                instCountDic[index] = count
+
 #os.system("rm null")
 
 
@@ -82,12 +100,14 @@ file_list = os.listdir("../libs/staticInstModel/lib")
 os.system("cp ../libs/staticInstModel/lib/* .")
 
 simOutput = subprocess.check_output(makeCommand1, shell=True)
+simOutput = simOutput.decode("utf-8")
 
 
 for num in domi_list:
-	if str(num) + " cmp:" in simOutput:
-		DOMI_CHECK = True 
-		DOMI_INDEX.append(domi_list.index(num))
+    if str(num) + " cmp:" in simOutput:
+        DOMI_CHECK = True
+        DOMI_INDEX.append(domi_list.index(num))
+
 # Clean the copied files
 for file in file_list:
     os.remove(file)
@@ -122,23 +142,35 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
             ############################################################################
             # RUN Logic-level Masking:Get logic masking and final benign rate
             ############################################################################
-            llCommand = ["python", "../getCmpLogicMasking_m.py", src_name, `instIndex`]
+            llCommand = ["python", "../getCmpLogicMasking_m.py", src_name, str(instIndex)]
             p = subprocess.Popen(llCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             llOutput = p.stdout.read()
+            llOutput  = llOutput.decode("utf-8")
+            print(llOutput)
             
-            #print llOutput
+            #print("OUTPUT", llOutput.split("\n"))
             
             #exit()
+
             llBenign = float(llOutput.split("\n")[-2])
+            #print(llBenign)
+
+            if llBenign == float(-1):
+                #print("PHY node")
+                llBenign = 0
+                if targetIndex in domi_list:
+                   instCount = instCountDic[targetIndex]
+
             llSdc = 1 - llBenign
             sdcContr = llSdc * simPR
             totalTmnInstCount += instCount
             accumSdc += sdcContr * instCount
             accumCrash += simCR * instCount
-            print "SDC: cmp " + `instIndex` + " ------> " + `sdcContr`
-            print "Accum SDC", accumSdc, instCount
-            #print llOutput
-            #exit()
+            print("SDC: cmp " + str(instIndex) + " ------> " + str(sdcContr))
+            print("Accum SDC", accumSdc, instCount)
+
+            if (instIndex in cmp_percent) and (instIndex in domi_list):
+                cmp_percent[instType] = True
 
         if "store" in instType:
             ############################################################################
@@ -155,8 +187,13 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
             totalTmnInstCount += instCount
             accumSdc += sdcContr * instCount
             accumCrash += simCR * instCount
-            print "SDC: store " + `instIndex` + " ------> " + `sdcContr`
-            print "Accum SDC", accumSdc, instCount
+            print("SDC: store " + str(instIndex) + " ------> " + str(sdcContr))
+            print("Accum SDC", accumSdc, instCount)
+
+            # This is the only outputstore
+            if instIndex in GLOBAL_STORE_LIST and  len(domi_list) == 1:
+                out_store = True
+
 
         if "call" in instType:
             if len( indexNType.split(" ") ) >= 3:
@@ -169,12 +206,13 @@ for opLine in simOutput.split("\n"): # Each line is a leaf node of SIM, need wei
                     totalTmnInstCount += instCount
                     accumSdc += sdcContr * instCount
                     accumCrash += simCR * instCount
-                    print "SDC: call " + `instIndex` + " ------> " + `sdcContr`
+                    print("SDC: call " + str(instIndex) + " ------> " + str(sdcContr))
 
 fSdc = 0
 fCrash = 0
 fBenign = 1
 
+# Calculating and ensuring bounded valeus
 if totalTmnInstCount != 0:
     fSdc = accumSdc / float(totalTmnInstCount)
     fCrash = accumCrash / float(totalTmnInstCount)
@@ -186,18 +224,28 @@ if totalTmnInstCount != 0:
     if fSdc > 1:
         fSdc = 1
 
+# Check if instruction directly affects output store deterministicaly
+for key in cmp_percent:
+    if cmp_percent[key] == True:
+        if out_store == True:
+            fSdc = 1 
+            fCrash = 0
+            fBenign = 0
+
+
+# Handling lucky stores
 scale = fSdc
 for nums in DOMI_INDEX:
     scale = (1 - domi_val[nums])*fSdc
 
+fBenign += (fSdc - scale)
 fSdc = scale
-fBenign += (fSdc -scale)
 
-print "\n***************************"
-print "Final SDC: " + `fSdc`
-print "Final Benign: " + `fBenign`
-print "Final Crash: " + `fCrash`
+print("\n***************************")
+print("Final SDC: " + str(fSdc))
+print("Final Benign: " + str(fBenign))
+print("Final Crash: " + str(fCrash))
 
 os.chdir("..")
-if os.path.exists("Inst" + `targetIndex`):
-    rmtree("Inst" + `targetIndex`)
+if os.path.exists("Inst" + str(targetIndex)):
+    rmtree("Inst" + str(targetIndex))

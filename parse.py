@@ -47,7 +47,7 @@ if sys.argv[1] == "True":
                     #print "Start index excountered"
                     if first == True:
                         first = False
-                        path_string += (`num` + char) 
+                        path_string += (str(num) + char) 
                     else:
                         if path_string not in unique_strings:
                             unique_strings.append(path_string)
@@ -56,9 +56,9 @@ if sys.argv[1] == "True":
                 
                         hash_table[call_count][y][x].add(index)
                 
-                        path_string = (`num` + char) 
+                        path_string = (str(num) + char) 
                 else:
-                    path_string += (`num` + char) 
+                    path_string += (str(num) + char) 
             else:
                 num_temp += char
 
@@ -84,15 +84,15 @@ for line in file1:
 
     if line == "":
         continue
-        
+
     temp_list = sorted(list(hash_table[call_count][y][x]))
 
     line += '-'
 
     for num in temp_list:
-         line = line + `num`
+         line = line + str(num)
     
-    line_t = `call_count` + " " + `x` + " " + `y` + ":" + line + "\n"
+    line_t = str(call_count) + " " + str(x) + " " + str(y) + ":" + str(line) + "\n"
     
     file2.write(line_t)
 
@@ -130,4 +130,4 @@ for line in file1:
 file1.close()
 
 for key in group_dic:
-    print group_dic[key][0]
+    print(group_dic[key][0])

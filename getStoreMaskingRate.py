@@ -16,7 +16,6 @@ profileMemLinesList = [] # Saves all profiled line from mem result.
 cmpMaskingDic = {}
 instExecDic = {}
 instTupleDic = {}
-OutputStoreMasking = {}
 
 # Read cmpMasking list and cmp/call execution counts
 def initMaskingAndCounts():
@@ -85,7 +84,7 @@ def readAllStores():
         profileMemLinesList = lines
         
         # DEBUG
-        print "Size of profiled mem result: " + `len(profileMemLinesList)`
+        print("Size of profiled mem result: " + str(len(profileMemLinesList)))
 
         for line in lines:
             adrs = 0
@@ -193,9 +192,9 @@ def readAllStores():
         
     
     # DEBUG
-    print "WAR MASKING: "
-    print storeWarMaskingDic
-    print ""
+    print("WAR MASKING: ")
+    print(storeWarMaskingDic)
+    print("")
 
 #    for storeIndex in storeAdrsCacheDic:
 #        storeToLoadDic[storeIndex] = []
@@ -207,8 +206,8 @@ def readAllStores():
 #                #if adrs in loadAdrsCacheDic[loadIndex] and loadIndex not in storeToLoadDic[storeIndex]:
 #                    storeToLoadDic[storeIndex].append(instIndex)
         # DEBUG
-#    print " -- Store " + `storeIndex` +" to Load List Size: " + `len(storeToLoadDic[storeIndex])`
-    #print storeToLoadDic
+#    print(" -- Store " + `storeIndex` +" to Load List Size: " + `len(storeToLoadDic[storeIndex])`)
+    #print(storeToLoadDic)
 
 ##########################################################################
 loadToTerminatorCacheDic = {}
@@ -220,7 +219,7 @@ globalStoreGraph = {} # {}->{}->[]
 def getMaskingRateFromInst(initStoreIndex):
     global cmpMaskingDic, loadToTerminatorCacheDic, instExecDic, storeToLoadDic, globalStoreGraph
 
-    print " => Calculating masking rate for store " + `initStoreIndex`
+    print(" => Calculating masking rate for store " + str(initStoreIndex))
 
     depLoadList = [] # Loads that use same addresses
     depStoreList = []
@@ -296,6 +295,8 @@ def getMaskingRateFromInst(initStoreIndex):
                 os.system("cp libs/ScsEndSeq/lib/* .")
                 diffInsts = subprocess.check_output(makeCommand1, shell=True)
 
+                diffInsts = diffInsts.decode("utf-8")
+
                 loadToTerminatorCacheDic[int(loadIndex)] = diffInsts
 
                 # Clean the copied files
@@ -361,9 +362,9 @@ def getMaskingRateFromInst(initStoreIndex):
                 if len(diffCallList) > 0 and len(diffBioList) < (len(diffCallList)):
                     avBioMasking = totalBioMasking * len(diffBioList) / float(len(diffCallList))
                     loadSeqMaskingDic[loadIndex] = avBioMasking
-                    print "----------"
-                    print "avBioMasking: " + `avBioMasking`
-                    print "org in loadSeqDic: " + `loadSeqMaskingDic[loadIndex]`
+                    print("----------")
+                    print("avBioMasking: " + str(avBioMasking))
+                    print("org in loadSeqDic: " + str(loadSeqMaskingDic[loadIndex]))
             
             del depLoadList[-1]
 
@@ -405,7 +406,7 @@ def getMaskingRateFromInst(initStoreIndex):
                     if childNodeIndex not in visitedList:
                         depQ.append(childNodeIndex)
         visitedList.append(curNodeIndex)
-    print "====== >>>>>> Total Exec Count: " + `totalExecCount`
+    print("====== >>>>>> Total Exec Count: " + str(totalExecCount))
         
 
     # Do accumulation on maskings
@@ -443,19 +444,19 @@ def getMaskingRateFromInst(initStoreIndex):
         if curNodeIndex not in globalStoreGraph[initStoreIndex] or len(globalStoreGraph[initStoreIndex][curNodeIndex]) == 0:
             # If a cmp
             if curNodeIndex in cmpMaskingDic: #and curNodeIndex not in visitedList:
-                print "curNodeIndex for cmp: " + `curNodeIndex`
+                print("curNodeIndex for cmp: " + str(curNodeIndex))
                 cmpMaskingRate = cmpMaskingDic[curNodeIndex]
                 cmpExecCount = 0
                 if curNodeIndex in instExecDic:
                     cmpExecCount = instExecDic[curNodeIndex]
-                print "..its count: " + `cmpExecCount`
+                print("..its count: " + str(cmpExecCount))
                 cmpFinalMasking = cmpExecCount / float(totalExecCount) * (cmpMaskingRate * (1-accumMasking) + accumMasking)
                 #print " final masking of cmp: " + `curNodeIndex` + " -> " + `(cmpMaskingRate * (1-accumMasking) + accumMasking)` + " current accum: " + `accumMasking` + ", cmpExec: " + `cmpExecCount` + ", total: " + `totalExecCount`
                 finalAccumMasking += cmpFinalMasking
                 
                 # DEBUG
                 #print " =============>>>>> cmpExec: " + `cmpExecCount` + ", total: " + `totalExecCount`
-                print "-> Reaching a cmp " + `curNodeIndex` + ": " + `cmpFinalMasking` + ", before accum is " + `accumMasking` + ", now total masking is " + `finalAccumMasking` 
+                print("-> Reaching a cmp " + str(curNodeIndex) + ": " + str(cmpFinalMasking) + ", before accum is " + str(accumMasking) + ", now total masking is " + str(finalAccumMasking)) 
 
             # If a call
             elif curNodeIndex in depCallList: #and curNodeIndex not in visitedList:
@@ -464,7 +465,7 @@ def getMaskingRateFromInst(initStoreIndex):
                     callExecCount = instExecDic[curNodeIndex]
                 callFinalMasking = callExecCount / float(totalExecCount) * accumMasking
                 finalAccumMasking += callFinalMasking
-                print " >>> Reaching Call, " + `curNodeIndex` + " - callFinalMasking: " + `callFinalMasking` + ", before accum is " + `accumMasking` + ", now total masking is " + `finalAccumMasking`
+                print(" >>> Reaching Call, " + str(curNodeIndex) + " - callFinalMasking: " + str(callFinalMasking) + ", before accum is " + str(accumMasking) + ", now total masking is " + str(finalAccumMasking))
                 
 
         else:
@@ -493,10 +494,10 @@ def getMaskingRateFromInst(initStoreIndex):
 
 
 
-print "Reading masking rates and execution counts ... "
+print("Reading masking rates and execution counts ... ")
 initMaskingAndCounts()
 
-print "Reading load/store runtime addresses ... "
+print("Reading load/store runtime addresses ... ")
 readAllStores()
 
 inst_count_dic = {}
@@ -531,7 +532,7 @@ if DO_REDUCTION == True:
     file1.close()
 
 
-print "Calculating masking for stores ... "
+print("Calculating masking for stores ... ")
 
 os.system("rm results/store_masking.txt")
 # Dump masking rate for every store
@@ -542,11 +543,11 @@ with open("results/store_masking.txt", 'w') as sf:
         #if storeIndex in storeWarMaskingDic and storeIndex not in GLOBAL_STORE_LIST:
         #    warMasking = storeWarMaskingDic[storeIndex]
         totalMasking = (1-warMasking) * cmpMasking + warMasking
-        print "STORE cmp masking: " + `storeIndex` + ": " + `cmpMasking` 
-        print "STORE war masking: " + `storeIndex` + ": " + `warMasking` 
-        print "STORE total masking: " + `storeIndex` + ": " + `totalMasking` 
-        print ""
-        sf.write(`storeIndex` + " " +`(totalMasking)` + " " + `instExecDic[storeIndex]` + "\n")
+        print("STORE cmp masking: " + str(storeIndex) + ": " + str(cmpMasking))
+        print("STORE war masking: " + str(storeIndex) + ": " + str(warMasking))
+        print("STORE total masking: " + str(storeIndex) + ": " + str(totalMasking)) 
+        print("")
+        sf.write(str(storeIndex) + " " + str((totalMasking)) + " " + str(instExecDic[storeIndex]) + "\n")
 
     for store in GLOBAL_STORE_LIST:
-        sf.write(`store` + " " + "0.0" + " " + `instExecDic[store]` + "\n")
+        sf.write(str(store) + " " + str(0.0) + " " + str(instExecDic[store]) + "\n")

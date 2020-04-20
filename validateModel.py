@@ -14,9 +14,10 @@ with open("results/fi_breakdown.txt", 'r') as rf:
             count = int(line.split("Total FI: ")[1].replace("\n", ""))
             totalCount += count
 
-            command = ["python", "executeModel.py", prog_name, `index`]
+            command = ["python", "executeModel.py", prog_name, str(index)]
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             diffLines = p.stdout.read()
+            diffLines = diffLines.decode("utf-8")
             
             crashR = float(diffLines.split("\n")[-2].split(": ")[1].replace("\n", ""))
             maskingR = float(diffLines.split("\n")[-3].split(": ")[1].replace("\n", ""))
@@ -26,8 +27,8 @@ with open("results/fi_breakdown.txt", 'r') as rf:
             accumBenign += maskingR * count
             accumCrash += crashR * count
 
-            print "FI index: " + `index` + ", SDC: " + `sdcR` + ", Benign: " + `maskingR` + ", Crash: " + `crashR`
+            print("FI index: " + str(index) + ", SDC: " + str(sdcR) + ", Benign: " + str(maskingR) + ", Crash: " + str(crashR))
 
-print "Aggregated SDC: " + ` accumSdc/ float(totalCount)` 
-print "Aggregated Benign: " + `accumBenign / float(totalCount)` 
-print "Aggregated Crash: " + `accumCrash / float(totalCount)` 
+print("Aggregated SDC: " + str(accumSdc/ float(totalCount)))
+print("Aggregated Benign: " + str(accumBenign / float(totalCount))) 
+print("Aggregated Crash: " + str(accumCrash / float(totalCount))) 

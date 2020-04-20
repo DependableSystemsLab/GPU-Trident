@@ -33,7 +33,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     os.system("nvcc -arch=sm_30 " + dir_name + ".o " + OBJ_NAME + " -o " + OUT_NAME + " -O0")
 
     goldenOutput = subprocess.check_output("./" + OUT_NAME + " " + INPUT_PARAMETERS, shell=True)
-    #print goldenOutput
+    #print(goldenOutput)
 
     # Clean the copied files
     for file in file_list:
@@ -87,12 +87,12 @@ def prune_threads():
         first_stage = False
     
     if first_stage == True:
-        print "Profiling 1st stage of memory profiling"
+        print("Profiling 1st stage of memory profiling")
 
         # Control flow inside loop steps
         collectData("controlFlow-1", "control_flow_group-1.txt", False)
 
-    print "Profiling 2nd stage of memory profiling"
+    print("Profiling 2nd stage of memory profiling")
     collectData("controlFlow-2", "control_flow_group-2.txt", False)
 
     xIDs = []
@@ -104,12 +104,14 @@ def prune_threads():
 
     # Extract representative threads
     output = subprocess.check_output("python parse.py " + arg, shell=True)
+    output = output.decode("utf-8")
 
     output = output.replace(" ", "")
     
     representative_threads = output.splitlines()
 
     for thread in representative_threads:
+        thread = thread.decode("utf-8")
         indices = thread[1:-1]
         indices = indices.split(',')
         xIDs.append(int(indices[1]))
@@ -159,6 +161,9 @@ def prune_threads():
 
     cond_str += "))"
 
+    if (len(loads) == 0):
+        cond_str = "if(1)"
+
     command = "sed -i 's/if (LOAD)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
 
     os.system(command)
@@ -174,6 +179,9 @@ def prune_threads():
         cond_str += cond
 
     cond_str += "))"
+
+    if (len(stores) == 0):
+           cond_str = "if(1)"
 
     command = "sed -i 's/if (STORE)/" + cond_str + "/' libs/memPro/lib/memPro.cu"
 
@@ -385,7 +393,7 @@ def profile():
     
 def execute_trident():
     
-    print "\n*********************************\nTracing memory level propagation ...\n\n"
+    print("\n*********************************\nTracing memory level propagation ...\n\n")
     os.system("python getStoreMaskingRate.py " + PROGRAM_NAME + ".cu")
     
     # Validating model at 3 level
@@ -414,4 +422,4 @@ if __name__ == "__main__":
         execute_trident()
     
     else:
-        print "\n\nWrong input argument\n"
+        print("\n\nWrong input argument\n")

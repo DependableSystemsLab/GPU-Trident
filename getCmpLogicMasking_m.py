@@ -10,6 +10,8 @@ targetCmpIndex = int(sys.argv[2])
 ltCmpList = []
 storeMaskingMap = {}
 
+if_cmp = False
+
 # Read "loop_terminating_cmp_list.txt" first
 with open("../results/loop_terminating_cmp_list.txt", 'r') as lf:
     ltLines = lf.readlines()
@@ -30,7 +32,7 @@ diffLines = ""
 # None-loop-terminating cmp
 if targetCmpIndex not in ltCmpList:
     # DEBUG
-    print "Non-loop-terminating CMP: "
+    print("Non-loop-terminating CMP: ")
     
     flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I . -I ../."
     ktraceFlag = " -D KERNELTRACE"
@@ -42,8 +44,9 @@ if targetCmpIndex not in ltCmpList:
 
     #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
+    diffLines  = diffLines.decode("utf-8")
     #print "DL output:"
-    #print diffLines
+    print(diffLines)
     
     # Clean the copied files
     for file in file_list:
@@ -57,7 +60,7 @@ if targetCmpIndex not in ltCmpList:
 # Loop-terminating cmp
 else:
     # DEBUG
-    print "Loop-terminating CMP: "  
+    print("Loop-terminating CMP: ") 
 
     flagHeader = "CICC_MODIFY_OPT_MODULE=1 LD_PRELOAD=./libnvcc.so nvcc -arch=sm_30 -rdc=true -dc -g -G -Xptxas -O0 -D BAMBOO_PROFILING -I . -I ../."
     ktraceFlag = " -D KERNELTRACE"
@@ -69,6 +72,7 @@ else:
 
     #p = subprocess.Popen(makeCommand1, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     diffLines = subprocess.check_output(makeCommand1, shell=True)
+    diffLines  = diffLines.decode("utf-8")
     #print diffLines  
     
     # Clean the copied files
@@ -80,17 +84,32 @@ else:
     os.remove("opt_bamboo_after.ll")
     os.remove("opt_bamboo_before.ll")
     
-print ".........."
+print("..........")
+
+# Read "profile_cmp_prob_result.txt"
+with open("../readable_indexed.ll", 'r') as cmpf:
+    pcLines = cmpf.readlines()
+    for pcLine in pcLines:
+        if ("@profileCount(i64 " + str(targetCmpIndex) + ")") in pcLine:
+            if_cmp = True
+            break;
+    cmpf.close()
+
+# Signal that it is a phi instruction
+if if_cmp != True:
+    print(-1)
+    sys.exit()
+
 # Process results
 if "SDC 1" in diffLines or "Loop" in diffLines:
-    print 0 
+    print(0)
     sys.exit()
 
 if " " not in diffLines:
     if targetCmpIndex in ltCmpList:
-        print 0
+        print(0)
     else:
-        print 1
+        print(1)
     sys.exit()
 
 accumSdc = 0
@@ -110,12 +129,12 @@ for dline in diffLines.split("\n"):
                 storeSdc = 1 - storeMaskingMap[storeIndex]
         storeContr = storeAffectedRate * storeSdc
         accumSdc += storeContr  
-        print " >>> Store found: " + `storeIndex` + ", storeSdc: " + `storeSdc` + ", storeContr: " + `storeContr`
+        print(" >>> Store found: " + str(storeIndex) + ", storeSdc: " + str(storeSdc) + ", storeContr: " + str(storeContr))
         
 if accumSdc >= 1:
-    print 0
+    print(0)
 else:
-    print (1-accumSdc)
+    print((1-accumSdc))
 
 
 

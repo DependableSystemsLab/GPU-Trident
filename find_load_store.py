@@ -83,18 +83,18 @@ for line in f:
     if ("  store " in line) and rec_action == True:
         rec_action = False
         if "addrspace(3)" in line:
-            print index + " " + str(shared_crashRate) + " " + str(0.5) + " " + str(0.5 - shared_crashRate)
+            print(index + " " + str(shared_crashRate) + " " + str(0.5) + " " + str(0.5 - shared_crashRate))
             f_shared.write(str(index) + ' S\n')
         else:
-            print index + " " + str(global_crashRate) + " " + str(0.0) + " " + str(1.0 - global_crashRate)
+            print(index + " " + str(global_crashRate) + " " + str(0.0) + " " + str(1.0 - global_crashRate))
     
     if ("= load " in line) and rec_action == True:
         rec_action = False
         if "addrspace(3)" in line:
-            print index + " " + str(shared_crashRate)  + " " + str(0.5) + " " + str(0.5 - shared_crashRate)
+            print(index + " " + str(shared_crashRate)  + " " + str(0.5) + " " + str(0.5 - shared_crashRate))
             f_shared.write(str(index) + ' L\n')
         else:
-            print index + " " + str(global_crashRate) + " " + str(0.0) + " " + str(1.0 - global_crashRate)
+            print(index + " " + str(global_crashRate) + " " + str(0.0) + " " + str(1.0 - global_crashRate))
     
     if flip == True:
         rec_action = False

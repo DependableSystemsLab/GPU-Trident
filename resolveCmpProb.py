@@ -100,7 +100,7 @@ for cmpIndex in cmpLineDic:
             cmpMaskingDic[cmpIndex] = fMaskingCase*fProb + tMaskingCase*tProb
         else:
             # Unknown cases
-            print "#Un-executed Ptr Case " + `cmpIndex`
+            print("#Un-executed Ptr Case " + str(cmpIndex))
             cmpMaskingDic[cmpIndex] = 0
         #print aVLineDic[cmpIndex]
     elif "i" in typeStr and "void" not in typeStr:
@@ -215,14 +215,14 @@ for cmpIndex in cmpLineDic:
                 tMaskingCase = (2*dataWidth - tTotalSensBits) / float(2*dataWidth)
             else:
                 #: true, false, uno, ord
-                print "#Un-classified FP Case " + `cmpIndex`
+                print("#Un-classified FP Case " + str(cmpIndex))
                 #cmpMaskingDic[cmpIndex] = 0
                 fMaskingCase = 0
                 tMaskingCase = 0
             cmpMaskingDic[cmpIndex] = fMaskingCase*fProb + tMaskingCase*tProb
         else:
             # Unknown cases
-            print "#Un-executed FP Case " + `cmpIndex`
+            print("#Un-executed FP Case " + str(cmpIndex))
             cmpMaskingDic[cmpIndex] = 0
     
 
@@ -231,5 +231,5 @@ os.system("rm results/cmp_masking.txt")
 with open("results/cmp_masking.txt", 'w') as rf:
     for cmpIndex in ePLineDic:
         if cmpIndex in cmpMaskingDic:
-            rf.write(`cmpIndex` + " " + `cmpMaskingDic[cmpIndex]` + "\n")
+            rf.write(str(cmpIndex) + " " + str(cmpMaskingDic[cmpIndex]) + "\n")
 rf.close

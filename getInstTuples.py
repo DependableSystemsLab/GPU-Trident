@@ -57,7 +57,6 @@ with open("results/profile_mul_value_result.txt", 'r') as psf:
         tupleMaskingDic[llfiIndex] = zeroProb1 + zeroProb2
         tupleCrashDic[llfiIndex] = 0
 
-
 next_inst_present = True
 llfiIndex = 0
 # Read llfi indexed IR for the rest of insts        
@@ -112,8 +111,9 @@ with open(irPath, 'r') as irf:
                         shiftWidth = shiftAvDic[llfiIndex]
                         maskingRate = (shiftWidth*2-1) / float(totalWidth) # From where does this come
                         propRate = 1 - maskingRate
-                    
-                    
+                if ' fadd double ' in irLine:
+                    propRate = 0.75
+                    maskingRate = 0.25
  
                 # Assume the rest insts have prop rate of 1
                 tuplePropDic[llfiIndex] = propRate
@@ -128,9 +128,11 @@ with open(irPath, 'r') as irf:
 
 # Write to inst_tuples.txt
 os.system("rm results/inst_tuples.txt")
+
+
 with open("results/inst_tuples_1.txt", "w") as wf:
-    for index in tuplePropDic:
-        wf.write(`index` + " <" + `tuplePropDic[index]` + "," + `tupleMaskingDic[index]` + "," + `tupleCrashDic[index]` + ">\n")
+    for index in sorted(tuplePropDic.keys()):
+        wf.write(str(index) + " <" + str(tuplePropDic[index]) + "," + str(tupleMaskingDic[index]) + "," + str(tupleCrashDic[index]) + ">\n")
 
 
 k_range = open("kernel_range.txt", 'r')
@@ -151,7 +153,7 @@ for line in inst_tuple_file:
     if k_range_lines[0] <= int(line.split()[0]) <= k_range_lines[1]:
         new_file += line
 
-wf = open("results/inst_tuples.txt", 'w+')
+wf = open("results/inst_tuples.txt", 'w')
 
 wf.write(new_file)
 
