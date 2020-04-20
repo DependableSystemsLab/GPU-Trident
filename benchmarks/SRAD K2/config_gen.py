@@ -6,7 +6,6 @@ end_index = 0
 src_list = ["srad.h","srad_kernel.cu"]
 
 SHARED_MEM_USE = True
-DO_REDUCTION = False
 
 total_shared_mem_size = 5.12*1000
 

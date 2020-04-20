@@ -6,7 +6,6 @@ end_index = 0
 src_list = ["kernel.cu", "kernel2.cu"]
 
 SHARED_MEM_USE = False
-DO_REDUCTION = False
 
 total_shared_mem_size = 1*1024
 

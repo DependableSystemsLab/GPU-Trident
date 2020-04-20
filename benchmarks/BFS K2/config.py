@@ -3,7 +3,7 @@ import os
 PROGRAM_NAME = "bfs"
 PROGRAM_OUTPUT_NAME = "result.txt" 
 INPUT_PARAMETERS = "graph4096.txt"
-LLVM_PATH = "/home/gpli/llvm-3.0-build"
+LLVM_PATH = ""
 
 # Loads that transfer data from global memory
 GLOBAL_LOAD_LIST = []

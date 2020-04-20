@@ -6,7 +6,6 @@ end_index = 248
 src_list = []
 
 SHARED_MEM_USE = True
-DO_REDUCTION = True
 
 total_shared_mem_size = 3.072*1000
 

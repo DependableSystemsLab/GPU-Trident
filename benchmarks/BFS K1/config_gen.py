@@ -6,12 +6,8 @@ end_index = 0
 src_list = ["kernel.cu", "kernel2.cu"]
 
 SHARED_MEM_USE = False
-DO_REDUCTION = False
 
 total_shared_mem_size = 1*1024
 
 domi_list = [5, 9, 25, 32]
 domi_val = [0.33, 0.33, 0, 0]
-
-#domi_list = [5, 9]
-#domi_val = [0.3, 0.3]

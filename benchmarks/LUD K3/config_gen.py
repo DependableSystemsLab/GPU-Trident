@@ -6,7 +6,6 @@ end_index = 0
 src_list = ["common.c", "common.h", "lud_kernel.cu"]
 
 SHARED_MEM_USE = True
-DO_REDUCTION = False
 
 total_shared_mem_size = 2.0480*1000
 

@@ -3,10 +3,9 @@ Y_threads = 32*14
 Invoc_count = 1
 start_index = 0
 end_index = 0
-src_list = ["blur.cu"]
+src_list = [""]
 
 SHARED_MEM_USE = False
-DO_REDUCTION = True
 
 total_shared_mem_size = 1024
 
