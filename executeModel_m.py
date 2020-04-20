@@ -34,23 +34,6 @@ os.chdir("Inst" + str(targetIndex))
 instCountDic = {}
 smDic = {} # store masking dic
 
-# Read "profile_cmp_prob_result.txt"
-with open("../results/profile_cmp_prob_result.txt", 'r') as cmpf:
-    pcLines = cmpf.readlines()
-    for pcLine in pcLines:
-        index = int(pcLine.split(" ")[0].replace(":", ""))
-        c1 = int(pcLine.split(" ")[1])
-        c2 = int(pcLine.split(" ")[2])
-        totalC = c1 + c2
-        instCountDic[index] = totalC
-
-        if index in domi_list:
-            if c1 == 0:
-                cmp_percent[index] = False
-
-    cmpf.close()
-
-
 # Read "profile_call_prob_result.txt"
 with open("../results/profile_call_prob_result.txt", 'r') as callf:
     pcLines = callf.readlines()
@@ -81,7 +64,19 @@ with open("../results/fi_breakdown.txt", 'r') as rf:
             if index not in instCountDic:
                 instCountDic[index] = count
 
-#os.system("rm null")
+# Read "profile_cmp_prob_result.txt"
+with open("../results/profile_cmp_prob_result.txt", 'r') as cmpf:
+    pcLines = cmpf.readlines()
+    for pcLine in pcLines:
+        index = int(pcLine.split(" ")[0].replace(":", ""))
+        c1 = int(pcLine.split(" ")[1])
+        c2 = int(pcLine.split(" ")[2])
+        totalC = c1 + c2
+        instCountDic[index] = totalC
+        if index in domi_list:
+            if c1 == 0:
+                cmp_percent[index] = False
+    cmpf.close()
 
 
 ############################################################################

@@ -16,40 +16,10 @@ out_store = False
 src_name = sys.argv[1]
 targetIndex = int(sys.argv[2])
 
-#if os.path.exists("Inst" + str(targetIndex)):
-#    rmtree("Inst" + str(targetIndex))
-
-#os.system("mkdir Inst" + str(targetIndex))
-#copyfile(src_name, "Inst" + str(targetIndex) + "/" + src_name)
-
-#for src_file in src_list:
-    #print src_file
-#    copyfile(src_file, "Inst" + str(targetIndex) + "/" + src_file)
-
-#os.chdir("Inst" + str(targetIndex))
-############################
-
 # Model: SIM, LM, MM
 
 instCountDic = {}
 smDic = {} # store masking dic
-
-# Read "profile_cmp_prob_result.txt"
-with open("results/profile_cmp_prob_result.txt", 'r') as cmpf:
-    pcLines = cmpf.readlines()
-    for pcLine in pcLines:
-        index = int(pcLine.split(" ")[0].replace(":", ""))
-        c1 = int(pcLine.split(" ")[1])
-        c2 = int(pcLine.split(" ")[2])
-        totalC = c1 + c2
-        instCountDic[index] = totalC
-
-        if index in domi_list:
-            if c1 == 0:
-                cmp_percent[index] = False
-
-    cmpf.close()
-
 
 # Read "profile_call_prob_result.txt"
 with open("results/profile_call_prob_result.txt", 'r') as callf:
@@ -81,7 +51,20 @@ with open("results/fi_breakdown.txt", 'r') as rf:
             if index not in instCountDic:
                 instCountDic[index] = count
 
-#os.system("rm null")
+# Read "profile_cmp_prob_result.txt"
+with open("results/profile_cmp_prob_result.txt", 'r') as cmpf:
+    pcLines = cmpf.readlines()
+    for pcLine in pcLines:
+        index = int(pcLine.split(" ")[0].replace(":", ""))
+        c1 = int(pcLine.split(" ")[1])
+        c2 = int(pcLine.split(" ")[2])
+        totalC = c1 + c2
+        instCountDic[index] = totalC
+        if index in domi_list:
+            if c1 == 0:
+                cmp_percent[index] = False
+    cmpf.close()
+
 
 
 ############################################################################
