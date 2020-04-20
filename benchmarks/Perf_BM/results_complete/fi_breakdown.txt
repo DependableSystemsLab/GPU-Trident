@@ -1,0 +1,12 @@
+-- FI Index: 1, : , : , : , Total FI: 8192000
+-- FI Index: 2, : , : , : , Total FI: 8192000
+-- FI Index: 3, : , : , : , Total FI: 8192000
+-- FI Index: 4, : , : , : , Total FI: 8192000
+-- FI Index: 5, : , : , : , Total FI: 8192000
+-- FI Index: 6, : , : , : , Total FI: 8192000
+-- FI Index: 8, : , : , : , Total FI: 8192000
+-- FI Index: 9, : , : , : , Total FI: 8192000
+-- FI Index: 10, : , : , : , Total FI: 8192000
+-- FI Index: 11, : , : , : , Total FI: 8192000
+-- FI Index: 12, : , : , : , Total FI: 8192000
+-- FI Index: 13, : , : , : , Total FI: 8192000

@@ -1,0 +1,11 @@
+-- FI Index: 47, : , : , : , Total FI: 32768
+-- FI Index: 48, : , : , : , Total FI: 32768
+-- FI Index: 49, : , : , : , Total FI: 32768
+-- FI Index: 50, : , : , : , Total FI: 32768
+-- FI Index: 51, : , : , : , Total FI: 32768
+-- FI Index: 53, : , : , : , Total FI: 32768
+-- FI Index: 54, : , : , : , Total FI: 32768
+-- FI Index: 55, : , : , : , Total FI: 32768
+-- FI Index: 57, : , : , : , Total FI: 4095
+-- FI Index: 59, : , : , : , Total FI: 4095
+-- FI Index: 62, : , : , : , Total FI: 4095

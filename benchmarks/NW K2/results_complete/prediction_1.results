@@ -1,0 +1,15 @@
+FI index: 1, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 2, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 3, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 4, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 5, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 6, SDC: 0.875, Benign: 0.0, Crash: 0.0
+FI index: 8, SDC: 0.25, Benign: 0.0, Crash: 0.75
+FI index: 9, SDC: 1.0, Benign: 0.0, Crash: 0.0
+FI index: 10, SDC: 0.25, Benign: 0.0, Crash: 0.75
+FI index: 11, SDC: 1.0, Benign: 0.0, Crash: 0.0
+FI index: 12, SDC: 1.0, Benign: 0.0, Crash: 0.0
+FI index: 13, SDC: 0.25, Benign: 0.0, Crash: 0.75
+Aggregated SDC: 0.75
+Aggregated Benign: 0.0
+Aggregated Crash: 0.1875

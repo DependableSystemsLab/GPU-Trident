@@ -61,7 +61,7 @@ with open("results/profile_cmp_prob_result.txt", 'r') as cmpf:
         totalC = c1 + c2
         instCountDic[index] = totalC
         if index in domi_list:
-            if c1 == 0:
+            if c1 == 0 or c2 == 0:
                 cmp_percent[index] = False
     cmpf.close()
 

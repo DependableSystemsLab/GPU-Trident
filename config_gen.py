@@ -7,7 +7,6 @@ end_index = 0
 src_list = []
 
 SHARED_MEM_USE = True
-DO_REDUCTION = False
 
 total_shared_mem_size = 64
 domi_list = []
