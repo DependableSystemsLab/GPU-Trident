@@ -15,5 +15,5 @@ Dependencies (Tested on Ubuntu 14.04.6 LTS)
 # Execution
 1.  Populate the `config.py` and `config_gen.py` files according to kernel properties.
 2.  Run `python prepare.py index` command to get the `readable_indexed.ll` file. Use this file to get the index of output stores for this kernel and update the `config.py` file.
-3.  Run `python prepare.py profile` and populate `domi_val` in `config.py`, using `./results/lucky_store_details.txt` file.
+3.  Run `python prepare.py profile` and populate `domi_val` in `config.py`, using `./results/lucky_store_details.txt` file and `results/loop_terminating_cmp_list` file.
 4.  Run `python prepare.py execute` to get the overall SDC percentage and instruction SDC percentage predictions in `./results/prediction.results` file after command completion.
