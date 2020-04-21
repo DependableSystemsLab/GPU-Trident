@@ -1,9 +1,8 @@
 import os, subprocess, shutil, sys
 
 # Import user provided configuration 
-from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST, EXEC_MODE, CF_STAGE_1_NUM, CF_STAGE_2_NUM,X_threads
-Y_threads, Invoc_count
-from config_gen import SHARED_MEM_USE, start_index, X_threads, Y_threads, end_index
+from config import PROGRAM_NAME, PROGRAM_OUTPUT_NAME, INPUT_PARAMETERS, LLVM_PATH, GLOBAL_STORE_LIST, EXEC_MODE, CF_STAGE_1_NUM, CF_STAGE_2_NUM
+from config_gen import SHARED_MEM_USE, start_index, X_threads, Y_threads, Invoc_count, end_index
 from string import Template
 
 SRC_NAME = " "+ PROGRAM_NAME + ".cu "
@@ -31,7 +30,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     file_list = os.listdir("libs/" + dir_name +"/lib")
 
     os.system("cp libs/" + dir_name + "/lib/* .")
-    
+
     os.system(makeCommand1)
     os.system(makeCommand2)
     os.system("nvcc -arch=sm_30 " +  dir_name + ".cu -c -dc -O0")
@@ -334,6 +333,11 @@ def profile():
 
     # Profile the average value of multiply operands
     collectData("mulPro", "profile_mul_value_result.txt", False)
+
+    # Profile the number of time compare instructions resolve to 1 or 0
+    #collectData("callCount", "profile_call_prob_result.txt",False)
+    call_file = open("results/profile_call_prob_result.txt", "w")
+    call_file.close()
     
     # Record load and store instruction and crash rate "Temp here"
     os.system("python find_load_store.py > results/crash_rate.txt")
@@ -353,11 +357,6 @@ def profile():
                 wf.write("-- FI Index: " + index + ", : , : , : , Total FI: " + count + "\n")
     
     # Profile the number of time compare instructions resolve to 1 or 0
-    #collectData("callCount", "profile_call_prob_result.txt",False)
-    call_file = open("results/profile_call_prob_result.txt")
-    call_file.close()
-    
-    # Profile the number of time compare instructions resolve to 1 or 0
     collectData("cmpProb", "profile_cmp_prob_result.txt",False)
     
     # Profile the average value of arguments of compare instructions
@@ -373,8 +372,8 @@ def profile():
     os.system("python simplifyInstTuples.py")
     
     DO_REDUCTION = False
-    if (X_threads*Y_threads*invo_count) > 50000:
-    	DO_REDUCTION = True
+    if (X_threads*Y_threads*Invoc_count) > 50000:
+        DO_REDUCTION = True
 
     if DO_REDUCTION == True:
         prune_threads()
@@ -427,6 +426,12 @@ if __name__ == "__main__":
         os.remove("indexed.ll")
         
     elif sys.argv[1] == 'profile':
+
+        if not os.path.exists('results'):
+            os.makedirs('results')
+            call_file = open("results/loop_terminating_cmp_list.txt", "w")
+            call_file.close()
+
         profile()
     
     elif sys.argv[1] == 'execute': 
