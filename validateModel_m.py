@@ -34,7 +34,7 @@ for i in range(0, len(index), step):
 for subgroup in range(len(index_sublist_set)):
 
     for inst in index_sublist_set[subgroup]:
-        command = ["python", "executeModel.py", prog_name, str(inst)]
+        command = ["python", "executeModel_m.py", prog_name, str(inst)]
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         processes.append(p)
     counter = 0
@@ -42,7 +42,7 @@ for subgroup in range(len(index_sublist_set)):
     for counter in range(len(processes)):
         processes[counter].wait()
         diffLines = processes[counter].stdout.read()
-        diffLines = diffLines.decode("utf-8")
+        diffLines = diffLines.decode("utf-8")        
         crashR = float(diffLines.split("\n")[-2].split(": ")[1].replace("\n", ""))
         maskingR = float(diffLines.split("\n")[-3].split(": ")[1].replace("\n", ""))
         sdcR = float(diffLines.split("\n")[-4].split(": ")[1].replace("\n", ""))

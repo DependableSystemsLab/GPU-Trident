@@ -3,7 +3,7 @@
 import os, sys, subprocess
 
 from config import GLOBAL_LOAD_LIST, GLOBAL_STORE_LIST
-from config_gen import DO_REDUCTION
+from config_gen import X_threads, Y_threads, Invoc_count
 
 ##########################
 src_name = sys.argv[1]
@@ -16,6 +16,8 @@ profileMemLinesList = [] # Saves all profiled line from mem result.
 cmpMaskingDic = {}
 instExecDic = {}
 instTupleDic = {}
+
+DO_REDUCTION = False
 
 # Read cmpMasking list and cmp/call execution counts
 def initMaskingAndCounts():
@@ -484,8 +486,10 @@ readAllStores()
 
 inst_count_dic = {}
 
-if DO_REDUCTION == True:
+if (X_threads*Y_threads*Invoc_count) > 50000:
+        DO_REDUCTION = True
 
+if DO_REDUCTION == True:
     # Update the num counts of al the stores
     file1 = open("results/instCountResult.txt")
     

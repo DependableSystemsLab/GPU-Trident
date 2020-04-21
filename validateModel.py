@@ -13,7 +13,6 @@ with open("results/fi_breakdown.txt", 'r') as rf:
             index = int(line.split("FI Index: ")[1].split(",")[0])
             count = int(line.split("Total FI: ")[1].replace("\n", ""))
             totalCount += count
-
             command = ["python", "executeModel.py", prog_name, str(index)]
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             diffLines = p.stdout.read()
