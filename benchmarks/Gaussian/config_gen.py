@@ -1,6 +1,6 @@
-X_threads = 16*33
-Y_threads = 32*14
-Invoc_count = 1
+X_threads = 16
+Y_threads = 16
+Invoc_count = 15
 start_index = 0
 end_index = 0
 src_list = []

@@ -1,6 +1,6 @@
-X_threads = 64
+X_threads = 16*2
 Y_threads = 1
-Invoc_count = 1
+Invoc_count = 2
 start_index = 0
 end_index = 0
 src_list = ["needle_kernel.cu", "needle.h"]

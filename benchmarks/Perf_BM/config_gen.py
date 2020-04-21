@@ -3,7 +3,7 @@ Y_threads = 1
 Invoc_count = 1000
 start_index = 0
 end_index = 0
-src_list = [""]
+src_list = []
 
 SHARED_MEM_USE = False
 

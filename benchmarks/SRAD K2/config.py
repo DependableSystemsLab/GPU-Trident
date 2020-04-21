@@ -4,6 +4,7 @@ PROGRAM_NAME = "srad"
 PROGRAM_OUTPUT_NAME = "" 
 INPUT_PARAMETERS = "128 128 0 31 0 31 0.5 2"
 LLVM_PATH = ""
+EXEC_MODE = 1 # 0 -> Single threaded, 1 -> Multi-threaded
 
 CF_STAGE_1_NUM = 1000
 CF_STAGE_2_NUM = 1000

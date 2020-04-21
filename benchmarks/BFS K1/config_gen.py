@@ -1,6 +1,6 @@
-X_threads = 64
+X_threads = 4996
 Y_threads = 1
-Invoc_count = 1
+Invoc_count = 8
 start_index = 0
 end_index = 0
 src_list = ["kernel.cu", "kernel2.cu"]

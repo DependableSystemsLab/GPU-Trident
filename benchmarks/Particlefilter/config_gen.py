@@ -7,7 +7,7 @@ src_list = []
 
 SHARED_MEM_USE = False
 
-total_shared_mem_size = 2.0480*1000
+total_shared_mem_size = 1024
 
 domi_list = [89]
 domi_val = [0]
