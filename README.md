@@ -3,7 +3,7 @@ GPU-Trident analytically models error propagation in CUDA kernels and predicts t
 
 # Prerequisites
 Dependencies (Tested on Ubuntu 14.04.6 LTS)
-1. Python 2.7 or higher
+1. Python 2.7.6 or higher
 2. NVCC v6.0.1
 3. LLVM 3.0
 
