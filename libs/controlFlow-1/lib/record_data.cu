@@ -12,6 +12,7 @@
 
 extern "C" __device__ float control_flow_rec[Y_MAX][X_MAX][CF_1_NUM];
 extern "C" __device__ int count[Y_MAX][X_MAX];
+extern "C" __device__ unsigned long long record_flag;
 
 int lc;
 
@@ -32,6 +33,10 @@ void bambooLogKernelBegin(long long int invoc_count) {
     }
 
     lc = invoc_count;
+
+    invoc_count = 1;
+
+    cudaMemcpyToSymbol(record_flag, &invoc_count, sizeof(long long), 0, cudaMemcpyHostToDevice);
 }
 
 void bambooLogRecordOff()
@@ -39,6 +44,9 @@ void bambooLogRecordOff()
     cudaDeviceSynchronize();
 
     float controlflow[CF_1_NUM];
+    long long local_record = 0;
+
+    cudaMemcpyToSymbol(record_flag, &local_record, sizeof(long long), 0, cudaMemcpyHostToDevice);
 
     memset(controlflow, 0, sizeof(controlflow));
 

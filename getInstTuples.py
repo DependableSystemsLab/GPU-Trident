@@ -127,7 +127,8 @@ with open(irPath, 'r') as irf:
                 
 
 # Write to inst_tuples.txt
-os.system("rm results/inst_tuples.txt")
+if os.path.isfile("results/inst_tuples.txt"):
+    os.system("rm results/inst_tuples.txt")
 
 
 with open("results/inst_tuples_1.txt", "w") as wf:

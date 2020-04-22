@@ -227,7 +227,9 @@ for cmpIndex in cmpLineDic:
     
 
 # Dump results to cmp_masking.txt
-os.system("rm results/cmp_masking.txt")
+if os.path.isfile("results/cmp_masking.txt"):
+	os.system("rm results/cmp_masking.txt")
+	
 with open("results/cmp_masking.txt", 'w') as rf:
     for cmpIndex in ePLineDic:
         if cmpIndex in cmpMaskingDic:

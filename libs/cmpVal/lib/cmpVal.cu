@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define LIST_SIZE 100000
+#define LIST_SIZE 10000
 __device__ int init_flag = 0;
 __device__ unsigned long long icmpValue1List[LIST_SIZE];
 __device__ unsigned long long icmpValue2List[LIST_SIZE];

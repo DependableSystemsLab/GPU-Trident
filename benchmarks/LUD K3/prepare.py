@@ -34,7 +34,7 @@ def collectData(dir_name, result_name, keep_after_ll):
     os.system(makeCommand1)
     os.system(makeCommand2)
     os.system("nvcc -arch=sm_30 " +  dir_name + ".cu -c -dc -O0")
-    os.system("nvcc -arch=sm_30 " + dir_name + ".o " + OBJ_NAME + " -o " + OUT_NAME + " -O0")
+    os.system("nvcc -arch=sm_30 " + dir_name + ".o " + linkFiles + " -o " + OUT_NAME + " -O0")
 
     goldenOutput = subprocess.check_output("./" + OUT_NAME + " " + INPUT_PARAMETERS, shell=True)
     #print(goldenOutput)
@@ -66,13 +66,13 @@ def populate_file():
     file1 = open('local_param.h', 'w')
 
     #Read the value from config_gen and put in the local_param.h
-    file1.write('#define X_MAX '+ `X_threads`)
-    file1.write('\n#define Y_MAX ' + `Y_threads`)
-    file1.write('\n\n#define START_LOOP ' + `start_index`)
-    file1.write('\n#define END_LOOP ' + `end_index`)
+    file1.write('#define X_MAX '+ str(X_threads))
+    file1.write('\n#define Y_MAX ' + str(Y_threads))
+    file1.write('\n\n#define START_LOOP ' + str(start_index))
+    file1.write('\n#define END_LOOP ' + str(end_index))
 
-    file1.write('\n\n#define CF_1_NUM ' + `CF_STAGE_1_NUM`)
-    file1.write('\n#define CF_2_NUM ' + `CF_STAGE_2_NUM`)
+    file1.write('\n\n#define CF_1_NUM ' + str(CF_STAGE_1_NUM))
+    file1.write('\n#define CF_2_NUM ' + str(CF_STAGE_2_NUM))
 
     file1.close()
 
@@ -115,7 +115,6 @@ def prune_threads():
     representative_threads = output.splitlines()
 
     for thread in representative_threads:
-        thread = thread.decode("utf-8")
         indices = thread[1:-1]
         indices = indices.split(',')
         xIDs.append(int(indices[1]))
@@ -370,9 +369,16 @@ def profile():
     
     # Simplify instruction Tuples
     os.system("python simplifyInstTuples.py")
-    
+
+    count_file = open("results/instCountResult.txt")
+    count_list = []
     DO_REDUCTION = False
-    if (X_threads*Y_threads*Invoc_count) > 50000:
+    
+    for line in count_file:
+        count_list.append(int(line.split(": ")[1]))
+    count_file.close()
+
+    if max(count_list) > 65536:
         DO_REDUCTION = True
 
     if DO_REDUCTION == True:
@@ -403,11 +409,11 @@ def profile():
     
 def execute_trident():
     
-    print("\n*********************************\nTracing memory level propagation ...\n\n")
+    print("\n\nRunning Memory sub-model ...\n\n")
     os.system("python getStoreMaskingRate.py " + PROGRAM_NAME + ".cu")
     
     # Validating model at 3 level
-    print "\n*********************************\nValiadating model at 3 levels, fi_breakdown.txt must be in place for the input. Results will be in prediction.results ...\n\n"
+    print("\n\nRunning GPU-Trident, Results will be in prediction.results\n\n")
     if EXEC_MODE == 0:
         os.system("python validateModel.py " + PROGRAM_NAME + ".cu" + " > results/prediction.results ")
     else:

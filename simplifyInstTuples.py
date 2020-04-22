@@ -5,7 +5,9 @@ import os, sys
 prev_index = -1
 first_line = True
 
-os.system("rm results/simplified_inst_tuples.txt")
+if os.path.isfile("results/simplified_inst_tuples.txt"):
+	os.system("rm results/simplified_inst_tuples.txt")
+
 with open("results/inst_tuples.txt" ,'r') as itf:
     lines = itf.readlines()
     for line in lines:

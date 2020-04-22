@@ -17,7 +17,7 @@ cmpMaskingDic = {}
 instExecDic = {}
 instTupleDic = {}
 
-DO_REDUCTION = False
+REDUCTION_DONE = False
 
 # Read cmpMasking list and cmp/call execution counts
 def initMaskingAndCounts():
@@ -101,7 +101,7 @@ def readAllStores():
                     store_index_list.append(index)
 
                 # Record store counts
-                if DO_REDUCTION == False:
+                if REDUCTION_DONE == False:
                     if index not in instExecDic:
                         instExecDic[index] = 0
                     instExecDic[index] += 1
@@ -465,18 +465,19 @@ def getMaskingRateFromInst(initStoreIndex):
         visitedList.append(curNodeIndex)
             
 
-    return finalAccumMasking    
-            
+    return finalAccumMasking
+
+##########################################################################
+count_file = open("results/instCountResult.txt")
+count_list = []
+REDUCTION_DONE = False
     
+for line in count_file:
+    count_list.append(int(line.split(": ")[1]))
+count_file.close()
 
-
-##########################################################################
-
-
-##########################################################################
-
-
-
+if max(count_list) > 65536:
+    REDUCTION_DONE = True
 
 print("Reading masking rates and execution counts ... ")
 initMaskingAndCounts()
@@ -486,10 +487,7 @@ readAllStores()
 
 inst_count_dic = {}
 
-if (X_threads*Y_threads*Invoc_count) > 50000:
-        DO_REDUCTION = True
-
-if DO_REDUCTION == True:
+if REDUCTION_DONE == True:
     # Update the num counts of al the stores
     file1 = open("results/instCountResult.txt")
     
@@ -520,7 +518,9 @@ if DO_REDUCTION == True:
 
 print("Calculating masking for stores ... ")
 
-os.system("rm results/store_masking.txt")
+if os.path.isfile("results/store_masking.txt"):
+    os.system("rm results/store_masking.txt")
+
 # Dump masking rate for every store
 with open("results/store_masking.txt", 'w') as sf:
     for storeIndex in storesList:
@@ -536,4 +536,7 @@ with open("results/store_masking.txt", 'w') as sf:
         sf.write(str(storeIndex) + " " + str((totalMasking)) + " " + str(instExecDic[storeIndex]) + "\n")
 
     for store in GLOBAL_STORE_LIST:
-        sf.write(str(store) + " " + str(0.0) + " " + str(instExecDic[store]) + "\n")
+        count = 0
+        if store in instExecDic:
+            count = instExecDic[store]
+        sf.write(str(store) + " " + str(0.0) + " " + str(count) + "\n")

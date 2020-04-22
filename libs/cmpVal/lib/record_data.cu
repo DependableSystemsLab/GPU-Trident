@@ -8,7 +8,7 @@
 #include <cuda.h>
 #include <device_launch_parameters.h>
 
-#define LIST_SIZE 100000
+#define LIST_SIZE 10000
 extern "C" __device__ unsigned long long icmpValue1List[LIST_SIZE];
 extern "C" __device__ unsigned long long icmpValue2List[LIST_SIZE];
 extern "C" __device__ double fcmpValue1List[LIST_SIZE];
