@@ -1,0 +1,27 @@
+FI index: 3233, SDC: 0.10499492803180915, Benign: 0.6154325073558649, Crash: 0.27957256461232605
+FI index: 3234, SDC: 0.10499492803180915, Benign: 0.6154325073558649, Crash: 0.27957256461232605
+FI index: 3235, SDC: 0.20999005964214712, Benign: 0.2308648111332008, Crash: 0.5591451292246521
+FI index: 3236, SDC: 0.20999005964214712, Benign: 0.2308648111332008, Crash: 0.5591451292246521
+FI index: 3237, SDC: 0.20999005964214712, Benign: 0.2308648111332008, Crash: 0.5591451292246521
+FI index: 3238, SDC: 0.8, Benign: 0.19999999999999996, Crash: 0.0
+FI index: 3240, SDC: 0.162296, Benign: 0.087704, Crash: 0.75
+FI index: 3241, SDC: 0.649184, Benign: 0.350816, Crash: 0.0
+FI index: 3242, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3243, SDC: 0.21875, Benign: 0.03125, Crash: 0.75
+FI index: 3244, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3245, SDC: 1.0, Benign: 0.0, Crash: 0.0
+FI index: 3247, SDC: 0.162296, Benign: 0.087704, Crash: 0.75
+FI index: 3248, SDC: 0.649184, Benign: 0.350816, Crash: 0.0
+FI index: 3249, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3250, SDC: 0.21875, Benign: 0.03125, Crash: 0.75
+FI index: 3251, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3252, SDC: 1.0, Benign: 0.0, Crash: 0.0
+FI index: 3254, SDC: 0.162296, Benign: 0.087704, Crash: 0.75
+FI index: 3255, SDC: 0.649184, Benign: 0.350816, Crash: 0.0
+FI index: 3256, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3257, SDC: 0.21875, Benign: 0.03125, Crash: 0.75
+FI index: 3258, SDC: 0.75, Benign: 0.25, Crash: 0.0
+FI index: 3259, SDC: 1.0, Benign: 0.0, Crash: 0.0
+Aggregated SDC: 0.46055626491216467
+Aggregated Benign: 0.23963797377614923
+Aggregated Crash: 0.2998057613116861

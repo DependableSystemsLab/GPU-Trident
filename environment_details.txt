@@ -1,0 +1,252 @@
++ sudo sh collect_environment.sh
+SUDO_GID=1006
+MAIL=/var/mail/USER
+LANGUAGE=en_**:en
+USER=USER
+HOME=/home/******
+SUDO_UID=1006
+LOGNAME=USER
+TERM=xterm
+USERNAME=USER
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+LANG=en_**.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:
+SUDO_COMMAND=/bin/sh collect_environment.sh
+SHELL=/bin/bash
+SUDO_USER=******
+PWD=/home/******
++ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 14.04.6 LTS
+Release:        14.04
+Codename:       trusty
++ uname -a
+Linux ******-pc00 3.13.0-170-generic #220-Ubuntu SMP Thu May 9 12:40:49 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
++ lscpu
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                8
+On-line CPU(s) list:   0-7
+Thread(s) per core:    2
+Core(s) per socket:    4
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 26
+Stepping:              5
+CPU MHz:               1600.000
+BogoMIPS:              5319.47
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              8192K
+NUMA node0 CPU(s):     0-7
++ cat /proc/meminfo
+MemTotal:        8167548 kB
+MemFree:         3636444 kB
+Buffers:          165440 kB
+Cached:          2290140 kB
+SwapCached:       167224 kB
+Active:          1728616 kB
+Inactive:        2063172 kB
+Active(anon):     514992 kB
+Inactive(anon):   854376 kB
+Active(file):    1213624 kB
+Inactive(file):  1208796 kB
+Unevictable:           4 kB
+Mlocked:               4 kB
+SwapTotal:       8378364 kB
+SwapFree:        6974940 kB
+Dirty:                24 kB
+Writeback:             0 kB
+AnonPages:       1241352 kB
+Mapped:           123720 kB
+Shmem:             33156 kB
+Slab:             531308 kB
+SReclaimable:     403004 kB
+SUnreclaim:       128304 kB
+KernelStack:        5536 kB
+PageTables:        41468 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    12462136 kB
+Committed_AS:    6120904 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      326032 kB
+VmallocChunk:   34359395324 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:    376832 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:     7548480 kB
+DirectMap2M:      831488 kB
++ inxi -F -c0
+System:    Host: ******-pc00 Kernel: 3.13.0-170-generic x86_64 (64 bit) Console: tty 32 Distro: Ubuntu 14.04 trusty
+Machine:   System: HP-Pavilion product: NY810AV-ABA e9150t serial: MXV93405D9
+           Mobo: PEGATRON model: TRUCKEE version: 1.04 serial: 101079740001078
+           Bios: American Megatrends version: 5.18 date: 07/06/2009
+CPU:       Quad core Intel Core i7 CPU 920 (-HT-MCP-) cache: 8192 KB flags: (lm nx sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx)
+           Clock Speeds: 1: 1600.00 MHz 2: 1600.00 MHz 3: 1600.00 MHz 4: 1600.00 MHz 5: 1600.00 MHz 6: 1733.00 MHz 7: 1600.00 MHz 8: 1600.00 MHz
+Graphics:  Card: NVIDIA GM206 [GeForce GTX 960]
+           X.org: 1.15.1 drivers: nvidia (unloaded: fbdev,vesa,nouveau) tty size: 189x50 Advanced Data: N/A for root out of X
+Audio:     Card-1: NVIDIA Device 0fba driver: snd_hda_intel Sound: ALSA ver: k3.13.0-170-generic
+           Card-2: Intel 82801JI (ICH10 Family) HD Audio Controller driver: snd_hda_intel
+Network:   Card: Intel 82567V-2 Gigabit Network Connection driver: e1000e
+           IF: eth0 state: up speed: 1000 Mbps duplex: full mac: 00:26:18:9a:11:51
+Drives:    HDD Total Size: 2000.4GB (51.4% used) 1: id: /dev/sda model: ST2000DM001 size: 2000.4GB
+Partition: ID: / size: 1.8T used: 958G (56%) fs: ext4 ID: swap-1 size: 8.58GB used: 1.44GB (17%) fs: swap
+RAID:      No RAID devices detected - /proc/mdstat and md_mod kernel raid module present
+Sensors:   System Temperatures: cpu: 46.0C mobo: N/A
+           Fan Speeds (in rpm): cpu: N/A
+Info:      Processes: 279 Uptime: 53 days Memory: 2031.6/7976.1MB Runlevel: 2 Client: Shell (sh) inxi: 1.9.17
++ lsblk -a
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0   1.8T  0 disk
+├─sda1   8:1    0   1.8T  0 part /
+├─sda2   8:2    0     1K  0 part
+└─sda5   8:5    0     8G  0 part [SWAP]
+sdb      8:16   1         0 disk
+sdc      8:32   1         0 disk
+sdd      8:48   1         0 disk
+sde      8:64   1         0 disk
+sr0     11:0    1  1024M  0 rom
+ram0     1:0    0    64M  0 disk
+ram1     1:1    0    64M  0 disk
+ram2     1:2    0    64M  0 disk
+ram3     1:3    0    64M  0 disk
+ram4     1:4    0    64M  0 disk
+ram5     1:5    0    64M  0 disk
+ram6     1:6    0    64M  0 disk
+ram7     1:7    0    64M  0 disk
+ram8     1:8    0    64M  0 disk
+ram9     1:9    0    64M  0 disk
+loop0    7:0    0         0 loop
+loop1    7:1    0         0 loop
+loop2    7:2    0         0 loop
+loop3    7:3    0         0 loop
+loop4    7:4    0         0 loop
+loop5    7:5    0         0 loop
+loop6    7:6    0         0 loop
+loop7    7:7    0         0 loop
+ram10    1:10   0    64M  0 disk
+ram11    1:11   0    64M  0 disk
+ram12    1:12   0    64M  0 disk
+ram13    1:13   0    64M  0 disk
+ram14    1:14   0    64M  0 disk
+ram15    1:15   0    64M  0 disk
++ lsscsi -s
+[2:0:0:0]    disk    ATA      ST2000DM001-1ER1 CC25  /dev/sda   2.00TB
+[5:0:0:0]    cd/dvd  hp       DVD-RAM GH40L    RB0A  /dev/sr0        -
+[10:0:0:0]   disk    Generic- SD/MMC           1.00  /dev/sdb        -
+[10:0:0:1]   disk    Generic- Compact Flash    1.01  /dev/sdc        -
+[10:0:0:2]   disk    Generic- SM/xD-Picture    1.02  /dev/sdd        -
+[10:0:0:3]   disk    Generic- MS/MS-Pro        1.03  /dev/sde        -
++ module list
+collect_environment.sh: 17: collect_environment.sh: module: not found
++ nvidia-smi
+Sat May 30 14:18:15 2020
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 384.130                Driver Version: 384.130                   |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 960     Off  | 00000000:06:00.0  On |                  N/A |
+|  0%   38C    P8    12W / 130W |    297MiB /  1996MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|    0      1179      G   /usr/bin/X                                    78MiB |
+|    0     30426      G   /usr/bin/X                                    52MiB |
++-----------------------------------------------------------------------------+
++ lshw -short -quiet -sanitize
++ cat
+H/W path         Device      Class       Description
+====================================================
+                             system      NY810AV-ABA e9150t (NY810AV#ABA)
+/0                           bus         TRUCKEE
+/0/0                         memory      64KiB BIOS
+/0/4                         processor   Intel(R) Core(TM) i7 CPU         920  @ 2.67GHz
+/0/4/5                       memory      128KiB L1 cache
+/0/4/6                       memory      1MiB L2 cache
+/0/4/7                       memory      8MiB L3 cache
+/0/2a                        memory      8GiB System Memory
+/0/2a/0                      memory      2GiB DIMM 1066 MHz (0.9 ns)
+/0/2a/1                      memory      2GiB DIMM 1066 MHz (0.9 ns)
+/0/2a/2                      memory      2GiB DIMM 1066 MHz (0.9 ns)
+/0/2a/3                      memory      [empty]
+/0/2a/4                      memory      2GiB DIMM 1066 MHz (0.9 ns)
+/0/2a/5                      memory      [empty]
+/0/100                       bridge      5520/5500/X58 I/O Hub to ESI Port
+/0/100/1                     bridge      5520/5500/X58 I/O Hub PCI Express Root Port 1
+/0/100/3                     bridge      5520/5500/X58 I/O Hub PCI Express Root Port 3
+/0/100/3/0                   display     GM206 [GeForce GTX 960]
+/0/100/3/0.1                 multimedia  NVIDIA Corporation
+/0/100/7                     bridge      5520/5500/X58 I/O Hub PCI Express Root Port 7
+/0/100/14                    generic     7500/5520/5500/X58 I/O Hub System Management Registers
+/0/100/14.1                  generic     7500/5520/5500/X58 I/O Hub GPIO and Scratch Pad Registers
+/0/100/14.2                  generic     7500/5520/5500/X58 I/O Hub Control Status and RAS Registers
+/0/100/14.3                  generic     7500/5520/5500/X58 I/O Hub Throttle Registers
+/0/100/19        eth0        network     82567V-2 Gigabit Network Connection
+/0/100/1a                    bus         82801JI (ICH10 Family) USB UHCI Controller #4
+/0/100/1a.1                  bus         82801JI (ICH10 Family) USB UHCI Controller #5
+/0/100/1a.2                  bus         82801JI (ICH10 Family) USB UHCI Controller #6
+/0/100/1a.7                  bus         82801JI (ICH10 Family) USB2 EHCI Controller #2
+/0/100/1b                    multimedia  82801JI (ICH10 Family) HD Audio Controller
+/0/100/1c                    bridge      82801JI (ICH10 Family) PCI Express Root Port 1
+/0/100/1c.2                  bridge      82801JI (ICH10 Family) PCI Express Root Port 3
+/0/100/1c.2/0                bus         VT6315 Series Firewire Controller
+/0/100/1c.3                  bridge      82801JI (ICH10 Family) PCI Express Root Port 4
+/0/100/1c.3/0                storage     JMB363 SATA/IDE Controller
+/0/100/1c.3/0.1              storage     JMB363 SATA/IDE Controller
+/0/100/1d                    bus         82801JI (ICH10 Family) USB UHCI Controller #1
+/0/100/1d.1                  bus         82801JI (ICH10 Family) USB UHCI Controller #2
+/0/100/1d.2                  bus         82801JI (ICH10 Family) USB UHCI Controller #3
+/0/100/1d.7                  bus         82801JI (ICH10 Family) USB2 EHCI Controller #1
+/0/100/1e                    bridge      82801 PCI Bridge
+/0/100/1f                    bridge      82801JIR (ICH10R) LPC Interface Controller
+/0/100/1f.2                  storage     SATA Controller [RAID mode]
+/0/100/1f.3                  bus         82801JI (ICH10 Family) SMBus Controller
+/0/101                       bridge      Xeon 5500/Core i7 QuickPath Architecture Generic Non-Core Registers
+/0/102                       bridge      Xeon 5500/Core i7 QuickPath Architecture System Address Decoder
+/0/103                       bridge      Xeon 5500/Core i7 QPI Link 0
+/0/104                       bridge      Xeon 5500/Core i7 QPI Physical 0
+/0/105                       bridge      Xeon 5500/Core i7 Integrated Memory Controller
+/0/106                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Target Address Decoder
+/0/107                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Test Registers
+/0/108                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 0 Control Registers
+/0/109                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 0 Address Registers
+/0/10a                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 0 Rank Registers
+/0/10b                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 0 Thermal Control Registers
+/0/10c                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 1 Control Registers
+/0/10d                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 1 Address Registers
+/0/10e                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 1 Rank Registers
+/0/10f                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 1 Thermal Control Registers
+/0/110                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 2 Control Registers
+/0/111                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 2 Address Registers
+/0/112                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 2 Rank Registers
+/0/113                       bridge      Xeon 5500/Core i7 Integrated Memory Controller Channel 2 Thermal Control Registers
+/0/1             scsi2       storage
+/0/1/0.0.0       /dev/sda    disk        2TB ST2000DM001-1ER1
+/0/1/0.0.0/1     /dev/sda1   volume      1855GiB EXT4 volume
+/0/1/0.0.0/2     /dev/sda2   volume      8182MiB Extended partition
+/0/1/0.0.0/2/5   /dev/sda5   volume      8182MiB Linux swap / Solaris partition
+/0/2             scsi10      storage
+/0/2/0.0.0       /dev/sdb    disk        SCSI Disk
+/0/2/0.0.1       /dev/sdc    disk        SCSI Disk
+/0/2/0.0.2       /dev/sdd    disk        SCSI Disk
+/0/2/0.0.3       /dev/sde    disk        MS/MS-Pro
+/0/2/0.0.3/0     /dev/sde    disk
+/0/3             scsi5       storage
+/0/3/0.0.0       /dev/cdrom  disk        DVD-RAM GH40L

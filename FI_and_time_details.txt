@@ -1,0 +1,303 @@
+(Artifact 3: Data set of FI and performance evaluation experiments results)
+
+Formula for time for FI = (Profile + Inject Stage 1) + (Inject Stage 2 + Comparison)*(total number of faults injected)
+
+Pathfinder
+----------
+				Numbers 	Percentages
+Total FI		5000	
+SDC				494			9.88
+Benign			3768		75.36
+Crash			738			14.76
+
+FI										Trident			
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			14.39					Index		5.318			5.322	
+Inject Stage 1	7.259					Profile		251.624			250.965	
+Inject Stage 2	1.006					Execute		521.866			137.589	
+Comparison		0.05					Total		778.808			393.876	
+
+
+Hotspot
+-------					
+				Numbers 	Percentages					
+Total FI		5000						
+SDC				1630		32.6					
+Benign			2809		56.18					
+Crash			561			11.22					
+
+FI										Trident			
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			131.299					Index		5.914			5.462
+Inject Stage 1	32.613					Profile		103.247			105.084	
+Inject Stage 2	10.87					Execute		864.15			197.882	
+Comparison		0.942					Total		973.311			308.428				
+
+
+Gaussian
+--------
+				Numbers 	Percentages		
+Total FI		5000				
+Benign			4519		90.38			
+SDC				109			2.18			
+Crash			372			7.44							
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.491					Index		4.891			4.823
+Inject Stage 1	5.344					Profile		36.1			36.225
+Inject Stage 2	0.328					Execute		152.48			31.629
+Comparison		0.035					Total		193.471			72.677
+
+
+NW K1
+-----
+				Numbers 	Percentages
+Total FI		5000	
+SDC				1540		30.80
+Benign			1779		35.58
+Crash			1681		33.62				
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.262					Index		5.012			5.001
+Inject Stage 1	5.651					Profile		38.025			37.686
+Inject Stage 2	0.489					Execute		822.917			243.64
+Comparison		0.024					Total		865.954			286.327
+
+
+NW K2
+-----
+				Numbers 	Percentages
+Total FI		5000	
+SDC				1576		31.52
+Benign			1801		36.02
+Crash			1623		32.46
+														
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.633					Index		5.012			5.292
+Inject Stage 1	5.671					Profile		38.452			36.792
+Inject Stage 2	0.497					Execute		828.82			244.069
+Comparison		0.026					Total		872.284			286.153
+
+
+Circuit
+-------
+				Numbers 	Percentages
+Total FI		5000
+SDC				2030		40.60
+Benign			1268		25.36
+Crash			1702		34.04					
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			84.527					Index		5.691			5.176
+Inject Stage 1	19.606					Profile		196.242			195.337
+Inject Stage 2	14.423					Execute		375.596			83.982
+Comparison		1.922					Total		577.529			284.495
+
+
+LUD K1
+------
+				Numbers 	Percentages
+Total FI		5000
+SDC				2176		43.52
+Benign			1315		26.3
+Crash			1509		30.18
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.365					Index		5.222			5.347
+Inject Stage 1	5.678					Porfile  	37.534			37.472
+Inject Stage 2	0.483					Execute		332.79			102.186
+Comparison		0.023					Total		375.546			145.005
+
+
+LUD K2
+------
+				Numbers 	Percentages
+Total FI		5000
+SDC				2516		50.32
+Benign			1308		51.99
+Crash			1176		23.52
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.237					Index		5.071			5.264
+Inject Stage 1	5.502					Profile		37.245			37.516
+Inject Stage 2	0.702					Execute		502.337			143.4
+Comparison		0.023					Total		544.653			186.18
+
+
+LUD K3
+------
+				Numbers 	Percentages
+Total FI		5056
+SDC				2115		41.84
+Benign			1405		27.79
+Crash			1536		30.38
+										
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.381					Index		5.344			5.333
+Inject Stage 1	5.531					Profile		37.875			37.818
+Inject Stage 2	0.668					Execute		172.448			46.69
+Comparison		0.021					Total		215.667			89.841
+
+
+BFS K1
+------
+				Numbers 	Percentages
+Total FI		5000
+SDC				806			16.12
+Benign			3541		70.82
+Crash			653			13.06
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			6.14					Index		4.841			4.852
+Inject Stage 1	5.6						Profile		36.679			36.599
+Inject Stage 2	0.4						Execute		169.93			43.262
+Comparison		0.00031					Total 		211.45			84.713
+
+
+BFS K2
+------
+				Numbers 	Percentages
+Total FI		5012
+SDC				1463		29.19
+Benign			2970		59.26
+Crash			579			11.55
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			6.07					Index		5.313			4.921
+Inject Stage 1	5.78					Profile		36.712			36.481
+Inject Stage 2	0.43					Execute		52.822			14.522
+Comparison		0.00038					Total		94.847			55.924
+
+
+SRAD K1
+-------
+				Numbers 	Percentages
+Total FI		5000
+SDC				1103		22.06
+Bengin			2730		54.60
+Crash			1167		23.34
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			6.959					Index		5.185			5.664
+Inject Stage 1	6.064					Profile		39.867			38.753
+Inject Stage 2	0.839					Execute		2401.595		576.354
+Comparison		0.023					Total		2446.647		620.771
+
+
+SRAD K2
+-------
+				Numbers 	Percentages
+Total FI		5000
+SDC				1435		28.70
+Bengin			2050		41.00
+Crash			1515		30.30
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			7.029					Index		5.791			5.165
+Inject Stage 1	6.125					Profile		39.308			39.252
+Inject Stage 2	0.75					Execute		450.365			115.806
+Comparison		0.046					Total		495.464			160.223
+
+
+Lulesh
+------
+				Numbers 	Percentages
+Total FI		5000
+SDC				1091		21.82
+Benign			3411		68.22
+Crash			498			9.96
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			100.562					Index		4.841			4.852
+Inject Stage 1	13.838					Profile		121.56			122.63
+Inject Stage 2	15.202					Execute		29.927			135.776
+Comparison		0.023					Total		156.328			263.258
+
+
+ParticleFilter
+--------------
+				Numbers 	Percentages
+Total FI		5000
+SDC				1959		39.18
+Benign			1879		37.58
+Crash			1162		23.24
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			5.344					Index	5.211	5.211
+Inject Stage 1	5.337					Profile	58.34	58.34
+Inject Stage 2	0.788					Execute	24.224	111.587
+Comparison		0.021					Total	87.775	175.138
+
+
+Perf Benchmark
+--------------
+				Numbers 	Percentages
+Total FI		5032	
+SDC				3852		76.55007949
+Benign			221			4.391891892
+Crash			959			19.05802862
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			302.616					Index		6.421			6.421
+Inject Stage 1	56.131					Profile		422.289			422.289	
+Inject Stage 2	3.4097					Execute		54.729			12.12	
+Comparison		0.66					Total		483.439			440.83
+
+
+HPCCUDA
+-------
+				Numbers 	Percentages
+Total FI		5000
+SDC				2830		56.6
+Benign			1173		23.46
+Crash			997			19.94
+
+FI										Trident		
+Stage			time (seconds)			Stage		time (seconds)	time multi(seconds)
+Porfile			13.83					Index		5.837			5.837
+Inject Stage 1	7.978					Profile		63.693			63.693
+Inject Stage 2	0.8015					Execute		966.159			197.164
+Comparison		0.013					Total		1035.689		266.694
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

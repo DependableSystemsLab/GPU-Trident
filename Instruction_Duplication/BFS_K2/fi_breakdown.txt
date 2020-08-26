@@ -1,0 +1,11 @@
+-- FI Index: 33, SDC: 21, Benign: 327, Crash: 15, Total FI: 363
+-- FI Index: 34, SDC: 34, Benign: 334, Crash: 9, Total FI: 377
+-- FI Index: 35, SDC: 43, Benign: 311, Crash: 8, Total FI: 362
+-- FI Index: 36, SDC: 41, Benign: 305, Crash: 7, Total FI: 353
+-- FI Index: 37, SDC: 32, Benign: 334, Crash: 0, Total FI: 366
+-- FI Index: 38, SDC: 34, Benign: 89, Crash: 231, Total FI: 354
+-- FI Index: 39, SDC: 332, Benign: 39, Crash: 0, Total FI: 371
+-- FI Index: 40, SDC: 369, Benign: 0, Crash: 0, Total FI: 369
+-- FI Index: 41, SDC: 12, Benign: 0, Crash: 23, Total FI: 35
+-- FI Index: 42, SDC: 9, Benign: 0, Crash: 20, Total FI: 29
+-- FI Index: 43, SDC: 14, Benign: 0, Crash: 33, Total FI: 47
